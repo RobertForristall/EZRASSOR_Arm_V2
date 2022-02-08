@@ -1,0 +1,42 @@
+<?xml version='1.0'?>
+
+<robot name="ezrassor" xmlns:xacro="http://www.ros.org/wiki/xacro">
+
+  <xacro:property name="cameraSize" value="0.01"/>
+  <xacro:property name="cameraMass" value="0.1"/>
+
+  <xacro:include filename="$(find ezrassor_arm_v2)/resource/ezrassor.gazebo" />
+  <xacro:include filename="$(find ezrassor_arm_v2)/resource/materials.xacro" />
+  <xacro:include filename="$(find ezrassor_arm_v2)/resource/macros.xacro" />
+
+  <!--Below are all of the robot's Links/-->
+  <link name='base_link'>
+   <pose>0 0 0 0 0 0</pose>
+  </link>
+
+  <link name='body'>
+    <pose>0 0 0 0 0 0</pose>
+    <inertial>
+      <mass value="15.0"/>
+      <origin xyz="0 0 0" rpy=" 0 0 0"/>
+      <inertia
+          ixx="0.5" ixy="0" ixz="0"
+          iyy="1.0" iyz="0"
+          izz="0.1"
+      />
+    </inertial>
+    <collision name='collision'>
+      <origin xyz="0 0 0" rpy=" 0 0 0"/>
+      <geometry>
+        <base_unit/>
+      </geometry>
+    </collision>
+    <visual name='base_link_visual'>
+      <origin xyz="0 0 0" rpy=" 0 0 0"/>
+      <geometry>
+        <base_unit/>
+      </geometry>
+    </visual>
+  </link>
+
+</robot>
