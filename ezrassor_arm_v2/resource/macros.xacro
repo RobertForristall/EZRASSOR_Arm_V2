@@ -41,22 +41,65 @@
 
     <!-- VISUAL AND COLLISION MACROS -->
     <xacro:macro name="robot_arm">
-        <mesh filename="file:///home/robert/dev_ws/src/ezrassor_arm_v2/meshes/drum_arm_short.dae" scale="1.0 1.0 1.0"></mesh> 
+        <mesh filename="$(find ezrassor_arm_v2)/meshes/drum_arm_short.dae" scale="1.0 1.0 1.0"></mesh> 
     </xacro:macro>
 
     <xacro:macro name="robot_arm_drum">
-        <mesh filename="file:///home/robert/dev_ws/src/ezrassor_arm_v2/meshes/drum.dae" scale="0.35 0.35 0.35"></mesh> 
+        <mesh filename="$(find ezrassor_arm_v2)/meshes/drum.dae" scale="0.35 0.35 0.35"></mesh> 
     </xacro:macro>
 
     <xacro:macro name="robot_wheel">
-        <mesh filename="file:///home/robert/dev_ws/src/ezrassor_arm_v2/meshes/wheel.dae" scale="0.35 0.35 0.35"></mesh>  
+        <mesh filename="$(find ezrassor_arm_v2)/meshes/wheel.dae" scale="0.35 0.35 0.35"></mesh>  
     </xacro:macro>
     
     <xacro:macro name="base_unit">
-        <mesh filename="file:///home/robert/dev_ws/src/ezrassor_arm_v2/meshes/base_unit.dae" scale="0.35 0.35 0.35"></mesh>
+        <mesh filename="$(find ezrassor_arm_v2)/meshes/base_unit.dae" scale="0.35 0.35 0.35"></mesh>
     </xacro:macro>
 
     <xacro:macro name="drum_arm">
-        <mesh filename="file:///home/robert/dev_ws/src/ezrassor_arm_v2/meshes/drum_arm.dae" scale="0.35 0.35 0.35"></mesh>
+        <mesh filename="$(find ezrassor_arm_v2)/meshes/drum_arm.dae" scale="0.35 0.35 0.35"></mesh>
     </xacro:macro>
+
+    <!-- ARM VISUAL AND COLLISION MACROS -->
+
+    <xacro:macro name="link1">
+        <mesh filename="$(find ezrassor_arm_v2)/meshes/link1.dae" scale="0.35 0.35 0.35"></mesh> 
+    </xacro:macro>
+
+    <xacro:macro name="link2">
+        <mesh filename="$(find ezrassor_arm_v2)/meshes/link2.dae" scale="0.35 0.35 0.35"></mesh> 
+    </xacro:macro>
+
+    <xacro:macro name="link3">
+        <mesh filename="$(find ezrassor_arm_v2)/meshes/link3.dae" scale="0.35 0.35 0.35"></mesh> 
+    </xacro:macro>
+
+    <xacro:macro name="link4">
+        <mesh filename="$(find ezrassor_arm_v2)/meshes/link4.dae" scale="0.35 0.35 0.35"></mesh> 
+    </xacro:macro>
+
+    <xacro:macro name="link5">
+        <mesh filename="$(find ezrassor_arm_v2)/meshes/link5.dae" scale="0.35 0.35 0.35"></mesh> 
+    </xacro:macro>
+
+    <xacro:macro name="link6">
+        <mesh filename="$(find ezrassor_arm_v2)/meshes/link6.1.dae" scale="0.35 0.35 0.45"></mesh> 
+    </xacro:macro>
+
+    <xacro:macro name="arm_camera">
+        <mesh filename="$(find ezrassor_arm_v2)/meshes/arm_camera.dae" scale="0.35 0.35 0.35"></mesh> 
+    </xacro:macro>
+
+    <xacro:macro name="grabber1">
+        <mesh filename="$(find ezrassor_arm_v2)/meshes/grabber1.dae" scale="0.35 0.35 0.35"></mesh> 
+    </xacro:macro>
+
+    <xacro:macro name="grabber2">
+        <mesh filename="$(find ezrassor_arm_v2)/meshes/grabber2.dae" scale="0.35 0.35 0.35"></mesh> 
+    </xacro:macro>
+
+    <xacro:macro name="platform">
+        <mesh filename="$(find ezrassor_arm_v2)/meshes/platform.dae" scale="2 2 2"></mesh> 
+    </xacro:macro>
+
 </robot>
