@@ -102,4 +102,132 @@
         <mesh filename="$(find ezrassor_arm_v2)/meshes/platform.dae" scale="2 2 2"></mesh> 
     </xacro:macro>
 
+    <xacro:macro name="ros2_control_arm_joint1">
+        <ros2_control name="GazeboSystem" type="system">
+            <hardware>
+                <plugin>gazebo_ros2_control/GazeboSystem</plugin>
+            </hardware>
+            <joint name="joint1">
+                <command_interface name="position">
+                    <param name="min">-15</param>
+                    <param name="max">15</param>
+                </command_interface>
+                <state_interface name="position">
+                    <param name="initial_value">1.0</param>
+                </state_interface>
+                <state_interface name="velocity"/>
+                <state_interface name="effort"/>
+            </joint>
+        </ros2_control>
+    </xacro:macro>
+
+    <xacro:macro name="ros2_control_arm_joint2">
+        <ros2_control name="GazeboSystem" type="system">
+            <hardware>
+                <plugin>gazebo_ros2_control/GazeboSystem</plugin>
+            </hardware>
+            <joint name="joint2">
+                <command_interface name="position">
+                    <param name="min">-15</param>
+                    <param name="max">15</param>
+                </command_interface>
+                <state_interface name="position">
+                    <param name="initial_value">1.0</param>
+                </state_interface>
+                <state_interface name="velocity"/>
+                <state_interface name="effort"/>
+            </joint>
+        </ros2_control>
+    </xacro:macro>
+
+    <xacro:macro name="ros2_control_arm_joint3">
+        <ros2_control name="GazeboSystem" type="system">
+            <hardware>
+                <plugin>gazebo_ros2_control/GazeboSystem</plugin>
+            </hardware>
+            <joint name="joint3">
+                <command_interface name="position">
+                    <param name="min">-15</param>
+                    <param name="max">15</param>
+                </command_interface>
+                <state_interface name="position">
+                    <param name="initial_value">1.0</param>
+                </state_interface>
+                <state_interface name="velocity"/>
+                <state_interface name="effort"/>
+            </joint>
+        </ros2_control>
+    </xacro:macro>
+
+    <xacro:macro name="ros2_control_arm_joint4">
+        <ros2_control name="GazeboSystem" type="system">
+            <hardware>
+                <plugin>gazebo_ros2_control/GazeboSystem</plugin>
+            </hardware>
+            <joint name="joint4">
+                <command_interface name="position">
+                    <param name="min">-15</param>
+                    <param name="max">15</param>
+                </command_interface>
+                <state_interface name="position">
+                    <param name="initial_value">1.0</param>
+                </state_interface>
+                <state_interface name="velocity"/>
+                <state_interface name="effort"/>
+            </joint>
+        </ros2_control>
+    </xacro:macro>
+
+    <xacro:macro name="ros2_control_arm_joint5">
+        <ros2_control name="GazeboSystem" type="system">
+            <hardware>
+                <plugin>gazebo_ros2_control/GazeboSystem</plugin>
+            </hardware>
+            <joint name="joint5">
+                <command_interface name="position">
+                    <param name="min">-15</param>
+                    <param name="max">15</param>
+                </command_interface>
+                <state_interface name="position">
+                    <param name="initial_value">1.0</param>
+                </state_interface>
+                <state_interface name="velocity"/>
+                <state_interface name="effort"/>
+            </joint>
+        </ros2_control>
+    </xacro:macro>
+
+    <xacro:macro name="ros2_control_arm_grabber1">
+        <ros2_control name="GazeboSystem" type="system">
+            <hardware>
+                <plugin>gazebo_ros2_control/GazeboSystem</plugin>
+            </hardware>
+            <joint name="grabber1">
+                <command_interface name="effort">
+                    <param name="min">-1000</param>
+                    <param name="max">1000</param>
+                </command_interface>
+                <state_interface name="position"/>
+                <state_interface name="velocity"/>
+                <state_interface name="effort"/>
+            </joint>
+        </ros2_control>
+    </xacro:macro>
+
+    <xacro:macro name="ros2_control_arm_grabber2">
+        <ros2_control name="GazeboSystem" type="system">
+            <hardware>
+                <plugin>gazebo_ros2_control/GazeboSystem</plugin>
+            </hardware>
+            <joint name="grabber2">
+                <command_interface name="effort">
+                    <param name="min">-1000</param>
+                    <param name="max">1000</param>
+                </command_interface>
+                <state_interface name="position"/>
+                <state_interface name="velocity"/>
+                <state_interface name="effort"/>
+            </joint>
+        </ros2_control>
+    </xacro:macro>
 </robot>
