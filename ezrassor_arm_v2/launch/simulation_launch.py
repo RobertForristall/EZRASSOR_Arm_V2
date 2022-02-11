@@ -1,12 +1,14 @@
 import os
 from launch import LaunchDescription
 from launch.actions import DeclareLaunchArgument
-from launch.actions import IncludeLaunchDescription
+from launch.actions import (IncludeLaunchDescription, ExecuteProcess, RegisterEventHandler)
 from launch.substitutions import LaunchConfiguration
 from launch_ros.actions import Node
 from launch.launch_description_sources import PythonLaunchDescriptionSource
 from ament_index_python.packages import get_package_share_directory
 from launch.substitutions import LaunchConfiguration
+from launch.event_handlers import OnProcessExit
+import xacro
 
 def generate_launch_description():
 
@@ -14,12 +16,33 @@ def generate_launch_description():
     
     pkg_ezrassor_arm_v2 = get_package_share_directory('ezrassor_arm_v2')
 
+    pkg_ezrassor_arm_v2 = get_package_share_directory('ezrassor_arm_v2')
+    model_uri = os.path.join(pkg_ezrassor_arm_v2, 'resource/ezrassor_arm_v2.xacro')
 
+    ezrassor_description_config = xacro.process_file(model_uri)
+    content = ezrassor_description_config.toxml()
 
     gazebo = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(
             os.path.join(pkg_gazebo_ros, 'launch', 'gazebo.launch.py'),
         )
+    )
+
+    spawn_entity = Node(
+        package='ezrassor_arm_v2',
+        executable ='spawn_rover',
+        arguments=[LaunchConfiguration('rover_model'), LaunchConfiguration('robot_count'), LaunchConfiguration('spawn_x_coords'), LaunchConfiguration('spawn_y_coords'), LaunchConfiguration('spawn_z_coords'), LaunchConfiguration('spawn_roll'), LaunchConfiguration('spawn_pitch'), LaunchConfiguration('spawn_yaw')],
+        output='screen'
+    )
+
+    load_joint_state_controller = ExecuteProcess(
+        cmd=['ros2', 'control', 'load_controller', '-c', '/ezrassor/controller_manager', '--set-state', 'start', 'joint_state_broadcaster'],
+        output='screen'
+    )
+
+    load_paver_arm_trajectory_controller = ExecuteProcess(
+        cmd=['ros2', 'control', 'load_controller', '-c', '/ezrassor/controller_manager', '--set-state', 'start', 'paver_arm_trajectory_controller'],
+        output='screen'
     )
 
     return LaunchDescription([
@@ -60,7 +83,7 @@ def generate_launch_description():
         ),
         DeclareLaunchArgument(
             'spawn_z_coords',
-            default_value=['0', ''],
+            default_value=['0.5', ''],
             description='The z coordinate to spawn the rover in the simulation'
         ),
         DeclareLaunchArgument(
@@ -134,10 +157,24 @@ def generate_launch_description():
             description='Enable the park ranger package for the rover'
         ),
         gazebo,
+        spawn_entity,
         Node(
-            package='ezrassor_arm_v2',
-            executable ='spawn_rover',
-            arguments=[LaunchConfiguration('rover_model'), LaunchConfiguration('robot_count'), LaunchConfiguration('spawn_x_coords'), LaunchConfiguration('spawn_y_coords'), LaunchConfiguration('spawn_z_coords'), LaunchConfiguration('spawn_roll'), LaunchConfiguration('spawn_pitch'), LaunchConfiguration('spawn_yaw')],
-            output='screen'
+            package="robot_state_publisher",
+            executable="robot_state_publisher",
+            namespace='ezrassor',
+            output="screen",
+            parameters=[{"robot_description": content}],
+        ),
+        RegisterEventHandler(
+            event_handler=OnProcessExit(
+                target_action=spawn_entity,
+                on_exit=[load_joint_state_controller],
+            )
+        ),
+        RegisterEventHandler(
+            event_handler=OnProcessExit(
+                target_action=load_joint_state_controller,
+                on_exit=[load_paver_arm_trajectory_controller],
+            )
         )
     ])
