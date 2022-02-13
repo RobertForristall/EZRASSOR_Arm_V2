@@ -1,13 +1,15 @@
+from ast import arguments
+from http.server import executable
 import os
 from launch import LaunchDescription
 from launch.actions import DeclareLaunchArgument
 from launch.actions import (IncludeLaunchDescription, ExecuteProcess, RegisterEventHandler)
-from launch.substitutions import LaunchConfiguration
+from launch.substitutions import (LaunchConfiguration, PythonExpression)
 from launch_ros.actions import Node
 from launch.launch_description_sources import PythonLaunchDescriptionSource
 from ament_index_python.packages import get_package_share_directory
-from launch.substitutions import LaunchConfiguration
 from launch.event_handlers import OnProcessExit
+from launch.conditions import (LaunchConfigurationEquals)
 import xacro
 
 def generate_launch_description():
@@ -15,10 +17,12 @@ def generate_launch_description():
     pkg_gazebo_ros = get_package_share_directory('gazebo_ros')
     
     pkg_ezrassor_arm_v2 = get_package_share_directory('ezrassor_arm_v2')
-
-    pkg_ezrassor_arm_v2 = get_package_share_directory('ezrassor_arm_v2')
+    
+    #if (LaunchConfiguration('rover_model') == 'arm'):
+    #    model_uri = os.path.join(pkg_ezrassor_arm_v2, 'resource/ezrassor_arm_v2.xacro')
+    #else:
+    #    model_uri = os.path.join(pkg_ezrassor_arm_v2, 'resource/ezrassor.xacro')
     model_uri = os.path.join(pkg_ezrassor_arm_v2, 'resource/ezrassor_arm_v2.xacro')
-
     ezrassor_description_config = xacro.process_file(model_uri)
     content = ezrassor_description_config.toxml()
 
@@ -35,13 +39,91 @@ def generate_launch_description():
         output='screen'
     )
 
+    control_node = Node(
+            package="controller_manager",
+            executable="ros2_control_node",
+            parameters=[{"robot_description": content}],
+            output={
+                "stdout": "screen",
+                "stderr": "screen",
+            },
+        ),
+
+    if (LaunchConfiguration('rover_model') == 'arm'):
+        drivers = [
+            Node(
+                package='ezrassor_arm_v2',
+                executable='arms_driver',
+                arguments=['arm'],
+                output='screen'
+            ),
+            Node(
+                package='ezrassor_arm_v2',
+                executable='drums_driver',
+                arguments=['arm'],
+                output='screen'
+            ),
+            Node(
+                package='ezrassor_arm_v2',
+                executable='wheels_driver',
+                output='screen'
+            ),
+            Node(
+                package='ezrassor_arm_v2',
+                executable='paver_arm_driver',
+                output='screen'
+            )     
+        ]
+    else:
+        drivers = [
+            Node(
+                package='ezrassor_arm_v2',
+                executable='arms_driver',
+                arguments=['standard'],
+                output='screen'
+            ),
+            Node(
+                package='ezrassor_arm_v2',
+                executable='drums_driver',
+                arguments=['standard'],
+                output='screen'
+            ),
+            Node(
+                package='ezrassor_arm_v2',
+                executable='wheels_driver',
+                output='screen'
+            ),    
+        ]
+
     load_joint_state_controller = ExecuteProcess(
-        cmd=['ros2', 'control', 'load_controller', '-c', '/ezrassor/controller_manager', '--set-state', 'start', 'joint_state_broadcaster'],
+        cmd=['ros2', 'control', 'load_controller',"-c", "/ezrassor/controller_manager", '--set-state', 'start', 'joint_state_broadcaster'],
         output='screen'
     )
 
     load_paver_arm_trajectory_controller = ExecuteProcess(
-        cmd=['ros2', 'control', 'load_controller', '-c', '/ezrassor/controller_manager', '--set-state', 'start', 'paver_arm_trajectory_controller'],
+        condition = LaunchConfigurationEquals('rover_model', 'arm'),
+        cmd=['ros2', 'control', 'load_controller',"-c", "/ezrassor/controller_manager", '--set-state', 'start', 'paver_arm_trajectory_controller'],
+        output='screen'
+    )
+
+    load_gripper_effort_controller = ExecuteProcess(
+        condition = LaunchConfigurationEquals('rover_model', 'arm'),
+        cmd=['ros2', 'control', 'load_controller',"-c", "/ezrassor/controller_manager", '--set-state', 'start', 'gripper_effort_controller'],
+        output='screen'
+    )
+
+    load_diff_drive_controller = ExecuteProcess(
+        cmd=['ros2', 'control', 'load_controller',"-c", "/ezrassor/controller_manager", '--set-state', 'start', 'diff_drive_controller'],
+        output='screen'
+    )
+
+    load_arm_back_velocity_controller = ExecuteProcess(
+        cmd=['ros2', 'control', 'load_controller',"-c", "/ezrassor/controller_manager", '--set-state', 'start', 'arm_back_velocity_controller'],
+        output='screen'
+    )
+
+    load_drum_back_velocity_controller = ExecuteProcess(
+        cmd=['ros2', 'control', 'load_controller',"-c", "/ezrassor/controller_manager", '--set-state', 'start', 'drum_back_velocity_controller'],
         output='screen'
     )
 
@@ -173,8 +255,39 @@ def generate_launch_description():
         ),
         RegisterEventHandler(
             event_handler=OnProcessExit(
+                target_action=spawn_entity,
+                on_exit=drivers
+            )
+        ),
+        RegisterEventHandler(
+            event_handler=OnProcessExit(
+                target_action=load_joint_state_controller,
+                on_exit=[load_diff_drive_controller],
+            )
+        ),
+        RegisterEventHandler(
+            event_handler=OnProcessExit(
+                target_action=load_joint_state_controller,
+                on_exit=[load_arm_back_velocity_controller],
+            )
+        ),
+        RegisterEventHandler(
+            event_handler=OnProcessExit(
+                target_action=load_joint_state_controller,
+                on_exit=[load_drum_back_velocity_controller],
+            )
+        ),
+        RegisterEventHandler(
+            event_handler=OnProcessExit(
                 target_action=load_joint_state_controller,
                 on_exit=[load_paver_arm_trajectory_controller],
             )
-        )
+        ),
+        RegisterEventHandler(
+            event_handler=OnProcessExit(
+                target_action=load_joint_state_controller,
+                on_exit=[load_gripper_effort_controller],
+            )
+        ),
+            
     ])

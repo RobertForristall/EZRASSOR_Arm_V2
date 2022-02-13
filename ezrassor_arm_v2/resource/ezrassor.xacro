@@ -28,13 +28,13 @@
     <collision name='collision'>
       <origin xyz="0 0 0" rpy=" 0 0 0"/>
       <geometry>
-        <base_unit/>
+        <xacro:base_unit/>
       </geometry>
     </collision>
     <visual name='base_link_visual'>
       <origin xyz="0 0 0" rpy=" 0 0 0"/>
       <geometry>
-        <base_unit/>
+        <xacro:base_unit/>
       </geometry>
     </visual>
   </link>
@@ -43,7 +43,7 @@
     <collision name="collision">
       <origin xyz="0 0 0" rpy="0 0 0"/>
       <geometry>
-        <robot_wheel />
+        <xacro:robot_wheel />
       </geometry>
       <surface>
         <friction>
@@ -61,13 +61,13 @@
     <visual name="left_wheel_front_visual">
       <origin xyz="0 0 0" rpy="0 0 0"/>
       <geometry>
-        <robot_wheel />
+        <xacro:robot_wheel />
       </geometry>
     </visual>
     <inertial>
       <origin xyz="0 0 0" rpy="0 0 0" />
       <mass value="5"/>
-      <cylinder_inertia m="5" r="0.18" h="0.2"/>
+      <xacro:cylinder_inertia m="5" r="0.18" h="0.2"/>
     </inertial>
   </link>
 
@@ -75,7 +75,7 @@
     <collision name="collision">
       <origin xyz="0 0 0" rpy="0 0 3.14159"/>
       <geometry>
-        <robot_wheel />
+        <xacro:robot_wheel />
       </geometry>
       <surface>
         <friction>
@@ -87,13 +87,13 @@
     <visual name="right_wheel_front_visual">
       <origin xyz="0 0 0" rpy="0 0 3.14159"/>
       <geometry>
-        <robot_wheel />
+        <xacro:robot_wheel />
       </geometry>
     </visual>
     <inertial>
       <origin xyz="0 0 0" rpy="0 0 3.14159"/>
       <mass value="5"/>
-      <cylinder_inertia m="5" r="0.18" h="0.2"/>
+      <xacro:cylinder_inertia m="5" r="0.18" h="0.2"/>
     </inertial>
   </link>
 
@@ -101,7 +101,7 @@
     <collision name="collision">
       <origin xyz="0 0 0" rpy="0 0 0"/>
       <geometry>
-        <robot_wheel />
+        <xacro:robot_wheel />
       </geometry>
         <surface>
           <friction>
@@ -113,13 +113,13 @@
     <visual name="left_wheel_back_visual">
       <origin xyz="0 0 0" rpy="0 0 0"/>
       <geometry>
-        <robot_wheel />
+        <xacro:robot_wheel />
       </geometry>
     </visual>
     <inertial>
       <origin xyz="0 0 0" rpy="0 0 0"/>
       <mass value="5"/>
-      <cylinder_inertia m="5" r="0.18" h="0.2"/>
+      <xacro:cylinder_inertia m="5" r="0.18" h="0.2"/>
     </inertial>
   </link>
 
@@ -127,7 +127,7 @@
     <collision name="collision">
       <origin xyz="0 0 0" rpy="0 0 3.14159"/>
       <geometry>
-        <robot_wheel />
+        <xacro:robot_wheel />
       </geometry>
       <surface>
         <friction>
@@ -139,13 +139,13 @@
     <visual name="right_wheel_back_visual">
       <origin xyz="0 0 0" rpy="0 0 3.14159"/>
       <geometry>
-        <robot_wheel />
+        <xacro:robot_wheel />
       </geometry>
     </visual>
     <inertial>
       <origin xyz="0 0 0" rpy="0 0 3.14159"/>
       <mass value="5"/>
-      <cylinder_inertia m="5" r="0.18" h="0.2"/>
+      <xacro:cylinder_inertia m="5" r="0.18" h="0.2"/>
     </inertial>
   </link>
 
@@ -153,19 +153,19 @@
     <collision name="collision">
       <origin xyz="0 0 0" rpy="0 0 0"/>
       <geometry>
-        <drum_arm />
+        <xacro:drum_arm />
       </geometry>
     </collision>
     <visual name="visual">
       <origin xyz="0 0 0" rpy="0 0 0" />
       <geometry>
-        <drum_arm />
+        <xacro:drum_arm />
       </geometry>
     </visual>
     <inertial>
       <origin xyz="0 0 0" rpy="0 0 0"/>
       <mass value="5"/>
-      <cylinder_inertia m="5" r="0.05" h="0.3"/>
+      <xacro:cylinder_inertia m="5" r="0.05" h="0.3"/>
     </inertial>
   </link>
 
@@ -174,19 +174,19 @@
     <collision name="collision">
       <origin xyz="0 0 0" rpy="3.1415 0 3.1415"/>
       <geometry>
-        <drum_arm />
+        <xacro:drum_arm />
       </geometry>
     </collision>
     <visual name="visual">
       <origin xyz="0 0 0" rpy="3.1415 0 3.1415"/>
       <geometry>
-        <drum_arm />
+        <xacro:drum_arm />
       </geometry>
     </visual>
     <inertial>
       <origin xyz="0 0 0" rpy="0 0 3.1415"/>
       <mass value="5"/>
-      <cylinder_inertia m="5" r="0.05" h="0.3"/>
+      <xacro:cylinder_inertia m="5" r="0.05" h="0.3"/>
       <inertia
         ixx="1.0" ixy="0.0" ixz="0.0"
         iyy="1.0" iyz="0.0"
@@ -210,13 +210,13 @@
     <visual name="drum_front_visual">
       <origin xyz="0 0 0" rpy="0 0 0"/>
       <geometry>
-        <robot_arm_drum />
+        <xacro:robot_arm_drum />
       </geometry>
     </visual>
     <inertial>
       <origin xyz="0 0 0" rpy="0 0 0"/>
       <mass value="5"/>
-      <cylinder_inertia m="5" r="0.1839" h="1.0"/>
+      <xacro:cylinder_inertia m="5" r="0.1839" h="1.0"/>
     </inertial>
   </link>
 
@@ -236,17 +236,18 @@
     <visual name="drum_back">
       <origin xyz="0 0 0" rpy="3.1415 0 3.14159"/>
       <geometry>
-        <robot_arm_drum />
+        <xacro:robot_arm_drum />
       </geometry>
     </visual>
     <inertial>
       <origin xyz="0 0 0" rpy="0 0 3.14159"/>
       <mass value="5"/>
-      <cylinder_inertia m="5" r="0.1839" h="1.0"/>
+      <xacro:cylinder_inertia m="5" r="0.1839" h="1.0"/>
     </inertial>
   </link>
 
   <!-- Transmissions -->
+  <!--
   <transmission name="left_wheel_front_tran">
     <type>transmission_interface/SimpleTransmission</type>
     <joint name="left_wheel_front_hinge">
@@ -334,7 +335,7 @@
       <mechanicalReduction>1</mechanicalReduction>
     </actuator>
   </transmission>
-
+  -->
   <!-- Front Camera Added -->
   <link name="depth_camera_front">
     <collision>
@@ -355,7 +356,7 @@
     <inertial>
       <mass value="${cameraMass}" />
       <origin xyz="0 0 0" rpy="0 0 0"/>
-      <box_inertia m="${cameraMass}" x="${cameraSize}" y="${cameraSize}" z="${cameraSize}" />
+      <xacro:box_inertia m="${cameraMass}" x="${cameraSize}" y="${cameraSize}" z="${cameraSize}" />
       <inertia ixx="1e-6" ixy="0" ixz="0" iyy="1e-6" iyz="0" izz="1e-6" />
     </inertial>
   </link>
@@ -379,7 +380,7 @@
     <inertial>
       <mass value="${cameraMass}" />
       <origin xyz="0 0 0" rpy="0 0 0"/>
-      <box_inertia m="${cameraMass}" x="${cameraSize}" y="${cameraSize}" z="${cameraSize}" />
+      <xacro:box_inertia m="${cameraMass}" x="${cameraSize}" y="${cameraSize}" z="${cameraSize}" />
       <inertia ixx="1e-6" ixy="0" ixz="0" iyy="1e-6" iyz="0" izz="1e-6" />
     </inertial>
   </link>
@@ -483,5 +484,81 @@
     <limit effort="100" velocity="100"/>
     <joint_properties damping="0.0" friction="0.0"/>
   </joint>
+
+  <ros2_control name="GazeboSystem" type="system">
+            <hardware>
+                <plugin>gazebo_ros2_control/GazeboSystem</plugin>
+            </hardware>
+            <joint name="left_wheel_front_joint">
+            <command_interface name="velocity">
+                <param name="min">-10</param>
+                <param name="max">10</param>
+            </command_interface>
+            <state_interface name="position" />
+            <state_interface name="velocity" />
+        </joint>
+        <joint name="left_wheel_back_joint">
+            <command_interface name="velocity">
+                <param name="min">-10</param>
+                <param name="max">10</param>
+            </command_interface>
+            <state_interface name="position" />
+            <state_interface name="velocity" />
+        </joint>
+        <joint name="right_wheel_front_joint">
+            <command_interface name="velocity">
+                <param name="min">-10</param>
+                <param name="max">10</param>
+            </command_interface>
+            <state_interface name="position" />
+            <state_interface name="velocity" />
+        </joint>
+        <joint name="right_wheel_back_joint">
+            <command_interface name="velocity">
+                <param name="min">-10</param>
+                <param name="max">10</param>
+            </command_interface>
+            <state_interface name="position" />
+            <state_interface name="velocity" />
+        </joint>
+        <joint name="arm_back_joint">
+            <command_interface name="velocity">
+                <param name="min">-10</param>
+                <param name="max">10</param>
+            </command_interface>
+            <state_interface name="position" />
+            <state_interface name="velocity" />
+        </joint>
+        <joint name="drum_back_joint">
+            <command_interface name="velocity">
+                <param name="min">-10</param>
+                <param name="max">10</param>
+            </command_interface>
+            <state_interface name="position" />
+            <state_interface name="velocity" />
+        </joint>
+        <joint name="arm_front_joint">
+            <command_interface name="velocity">
+                <param name="min">-10</param>
+                <param name="max">10</param>
+            </command_interface>
+            <state_interface name="position" />
+            <state_interface name="velocity" />
+        </joint>
+        <joint name="drum_front_joint">
+            <command_interface name="velocity">
+                <param name="min">-10</param>
+                <param name="max">10</param>
+            </command_interface>
+            <state_interface name="position" />
+            <state_interface name="velocity" />
+        </joint>
+        </ros2_control>
+
+  <gazebo>
+    <plugin filename="libgazebo_ros2_control.so" name="gazebo_ros2_control">
+      <parameters>$(find ezrassor_arm_v2)/config/paver_arm_rover/default_position_controllers.yaml</parameters>
+    </plugin>
+  </gazebo>
 
 </robot>

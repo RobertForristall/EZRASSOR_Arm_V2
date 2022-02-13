@@ -9,9 +9,10 @@ data_files.append(('share/' + package_name + '/resource', ['resource/ezrassor.ga
 data_files.append(('share/' + package_name + '/meshes', ['meshes/base_station.dae', 'meshes/base_unit.dae', 'meshes/drum_arm.dae', 'meshes/drum.dae', 'meshes/wheel.dae', 'meshes/arm_camera.dae', 'meshes/grabber1.dae', 'meshes/grabber2.dae', 'meshes/link1.dae', 'meshes/link2.dae', 'meshes/link3.dae', 'meshes/link4.dae', 'meshes/link5.dae', 'meshes/link6.dae', 'meshes/link6.1.dae', 'meshes/platform.dae', 'meshes/rover_arm_back.dae', 'meshes/processor_housing.dae']))
 data_files.append(('share/' + package_name + '/config/paver_arm_rover', ['config/paver_arm_rover/default_position_controllers.yaml']))
 data_files.append(('share/' + package_name + '/config/standard_rover', ['config/standard_rover/default_position_controllers.yaml']))
-data_files.append(('share/' + package_name + '/source/arms_driver', ['source/arms_driver/__init__.py', 'source/arms_driver/__main__.py']))
-data_files.append(('share/' + package_name + '/source/drums_driver', ['source/drums_driver/__init__.py', 'source/drums_driver/__main__.py']))
-data_files.append(('share/' + package_name + '/source/wheels_driver', ['source/wheels_driver/__init__.py', 'source/wheels_driver/__main__.py']))
+#data_files.append(('share/' + package_name + '/source/arms_driver', ['source/arms_driver/__init__.py', 'source/arms_driver/__main__.py']))
+#data_files.append(('share/' + package_name + '/source/drums_driver', ['source/drums_driver/__init__.py', 'source/drums_driver/__main__.py']))
+#data_files.append(('share/' + package_name + '/source/wheels_driver', ['source/wheels_driver/__init__.py', 'source/wheels_driver/__main__.py']))
+#data_files.append(('share/' + package_name + '/source/paver_arm_driver', ['source/paver_arm_driver/__init__.py', 'source/paver_arm_driver/__main__.py']))
 data_files.append(('share/' + package_name, ['package.xml']))
 
 setup(
@@ -28,11 +29,11 @@ setup(
     tests_require=['pytest'],
     entry_points={
         'console_scripts': [
-            'arm_driver = ezrassor_arm_v2.arm_driver:main',
             'spawn_rover = ezrassor_arm_v2.spawn_rover:main',
-            "arms_driver = arms_driver.__main__:main",
-            "wheels_driver = wheels_driver.__main__:main",
-            "drums_driver = drums_driver.__main__:main",
+            "arms_driver = ezrassor_arm_v2.arms_driver:main",
+            "wheels_driver = ezrassor_arm_v2.wheels_driver:main",
+            "drums_driver = ezrassor_arm_v2.drums_driver:main",
+            "paver_arm_driver = ezrassor_arm_v2.paver_arm_driver:main",
         ],
     },
 )

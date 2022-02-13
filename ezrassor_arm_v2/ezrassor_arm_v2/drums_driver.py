@@ -12,6 +12,7 @@ listen to the same instructions topic and command actuators, instead of the sim.
 import std_msgs.msg
 import rclpy
 from rclpy.node import Node
+import sys
 
 NODE = "drums_driver"
 FRONT_DRUMS_EXTERNAL_TOPIC = "front_drum_instructions"
@@ -26,33 +27,49 @@ MAX_DRUM_SPEED = 5
 class DrumsSubscriber(Node):
     """Create a DRUMS_EXTERNAL_TOPIC subscriber node"""
 
-    def __init__(self):
+    def __init__(self, model):
         """
         Class constructor for this subscriber node
         """
         super().__init__("drums_driver")
+        self.model = model
 
-        self.front_drums_subscription = self.create_subscription(
-            std_msgs.msg.Float64,
-            FRONT_DRUMS_EXTERNAL_TOPIC,
-            self.handle_front_drum_movements,
-            QUEUE_SIZE,
-        )
+        if (self.model == 'arm'):
 
-        self.back_drums_subscription = self.create_subscription(
-            std_msgs.msg.Float64,
-            BACK_DRUMS_EXTERNAL_TOPIC,
-            self.handle_back_drum_movements,
-            QUEUE_SIZE,
-        )
+            self.back_drums_subscription = self.create_subscription(
+                std_msgs.msg.Float64,
+                BACK_DRUMS_EXTERNAL_TOPIC,
+                self.handle_back_drum_movements,
+                QUEUE_SIZE,
+            )
 
-        self.front_drums_publisher = self.create_publisher(
-            std_msgs.msg.Float64, FRONT_DRUMS_INTERNAL_TOPIC, QUEUE_SIZE
-        )
+            self.back_drums_publisher = self.create_publisher(
+                std_msgs.msg.Float64, BACK_DRUMS_INTERNAL_TOPIC, QUEUE_SIZE
+            )
+            
+        else:
 
-        self.back_drums_publisher = self.create_publisher(
-            std_msgs.msg.Float64, BACK_DRUMS_INTERNAL_TOPIC, QUEUE_SIZE
-        )
+            self.front_drums_subscription = self.create_subscription(
+                std_msgs.msg.Float64,
+                FRONT_DRUMS_EXTERNAL_TOPIC,
+                self.handle_front_drum_movements,
+                QUEUE_SIZE,
+            )
+
+            self.back_drums_subscription = self.create_subscription(
+                std_msgs.msg.Float64,
+                BACK_DRUMS_EXTERNAL_TOPIC,
+                self.handle_back_drum_movements,
+                QUEUE_SIZE,
+            )
+
+            self.front_drums_publisher = self.create_publisher(
+                std_msgs.msg.Float64, FRONT_DRUMS_INTERNAL_TOPIC, QUEUE_SIZE
+            )
+
+            self.back_drums_publisher = self.create_publisher(
+                std_msgs.msg.Float64, BACK_DRUMS_INTERNAL_TOPIC, QUEUE_SIZE
+            )
 
         self.get_logger().info("drums_driver node created successfully")
 
@@ -73,7 +90,8 @@ def main(passed_args=None):
     """Main entry point for the ROS node"""
     try:
         rclpy.init(args=passed_args)
-        drums_subscriber = DrumsSubscriber()
+        model = sys.argv[1]
+        drums_subscriber = DrumsSubscriber(model)
         rclpy.spin(drums_subscriber)
 
     except KeyboardInterrupt:

@@ -64,8 +64,8 @@ ezrassor:
   gripper_effort_controller:
     ros__parameters:
       joints:
-        - gripper1
-        - gripper2
+        - grabber_joint1
+        - grabber_joint2
       pid: {p: 100.0, i: 0.01, d: 10.0}
 
   diff_drive_controller:

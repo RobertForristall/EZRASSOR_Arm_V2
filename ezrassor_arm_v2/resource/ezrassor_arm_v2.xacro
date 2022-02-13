@@ -28,13 +28,13 @@
     <collision name='collision'>
       <origin xyz="0 0 0" rpy=" 0 0 0"/>
       <geometry>
-        <base_unit/>
+        <xacro:base_unit/>
       </geometry>
     </collision>
     <visual name='base_link_visual'>
       <origin xyz="0 0 0" rpy=" 0 0 0"/>
       <geometry>
-        <base_unit/>
+        <xacro:base_unit/>
       </geometry>
     </visual>
   </link>
@@ -43,7 +43,7 @@
     <collision name="collision">
       <origin xyz="0 0 0" rpy="0 0 0"/>
       <geometry>
-        <robot_wheel />
+        <xacro:robot_wheel />
       </geometry>
       <surface>
         <friction>
@@ -61,13 +61,13 @@
     <visual name="left_wheel_front_visual">
       <origin xyz="0 0 0" rpy="0 0 0"/>
       <geometry>
-        <robot_wheel />
+        <xacro:robot_wheel />
       </geometry>
     </visual>
     <inertial>
       <origin xyz="0 0 0" rpy="0 0 0" />
       <mass value="5"/>
-      <cylinder_inertia m="5" r="0.18" h="0.2"/>
+      <xacro:cylinder_inertia m="5" r="0.18" h="0.2"/>
     </inertial>
   </link>
 
@@ -75,7 +75,7 @@
     <collision name="collision">
       <origin xyz="0 0 0" rpy="0 0 3.14159"/>
       <geometry>
-        <robot_wheel />
+        <xacro:robot_wheel />
       </geometry>
       <surface>
         <friction>
@@ -87,13 +87,13 @@
     <visual name="right_wheel_front_visual">
       <origin xyz="0 0 0" rpy="0 0 3.14159"/>
       <geometry>
-        <robot_wheel />
+        <xacro:robot_wheel />
       </geometry>
     </visual>
     <inertial>
       <origin xyz="0 0 0" rpy="0 0 3.14159"/>
       <mass value="5"/>
-      <cylinder_inertia m="5" r="0.18" h="0.2"/>
+      <xacro:cylinder_inertia m="5" r="0.18" h="0.2"/>
     </inertial>
   </link>
 
@@ -101,7 +101,7 @@
     <collision name="collision">
       <origin xyz="0 0 0" rpy="0 0 0"/>
       <geometry>
-        <robot_wheel />
+        <xacro:robot_wheel />
       </geometry>
         <surface>
           <friction>
@@ -113,13 +113,13 @@
     <visual name="left_wheel_back_visual">
       <origin xyz="0 0 0" rpy="0 0 0"/>
       <geometry>
-        <robot_wheel />
+        <xacro:robot_wheel />
       </geometry>
     </visual>
     <inertial>
       <origin xyz="0 0 0" rpy="0 0 0"/>
       <mass value="5"/>
-      <cylinder_inertia m="5" r="0.18" h="0.2"/>
+      <xacro:cylinder_inertia m="5" r="0.18" h="0.2"/>
     </inertial>
   </link>
 
@@ -127,7 +127,7 @@
     <collision name="collision">
       <origin xyz="0 0 0" rpy="0 0 3.14159"/>
       <geometry>
-        <robot_wheel />
+        <xacro:robot_wheel />
       </geometry>
       <surface>
         <friction>
@@ -139,13 +139,13 @@
     <visual name="right_wheel_back_visual">
       <origin xyz="0 0 0" rpy="0 0 3.14159"/>
       <geometry>
-        <robot_wheel />
+        <xacro:robot_wheel />
       </geometry>
     </visual>
     <inertial>
       <origin xyz="0 0 0" rpy="0 0 3.14159"/>
       <mass value="5"/>
-      <cylinder_inertia m="5" r="0.18" h="0.2"/>
+      <xacro:cylinder_inertia m="5" r="0.18" h="0.2"/>
     </inertial>
   </link>
 
@@ -153,19 +153,19 @@
     <collision name="collision">
       <origin xyz="0 0 0" rpy="3.1415 0 3.1415"/>
       <geometry>
-        <drum_arm />
+        <xacro:drum_arm />
       </geometry>
     </collision>
     <visual name="visual">
       <origin xyz="0 0 0" rpy="3.1415 0 3.1415"/>
       <geometry>
-        <drum_arm />
+        <xacro:drum_arm />
       </geometry>
     </visual>
     <inertial>
       <origin xyz="0 0 0" rpy="0 0 3.1415"/>
       <mass value="5"/>
-      <cylinder_inertia m="5" r="0.05" h="0.3"/>
+      <xacro:cylinder_inertia m="5" r="0.05" h="0.3"/>
       <inertia
         ixx="1.0" ixy="0.0" ixz="0.0"
         iyy="1.0" iyz="0.0"
@@ -190,13 +190,13 @@
     <visual name="drum_back">
       <origin xyz="0 0 0" rpy="3.1415 0 3.14159"/>
       <geometry>
-        <robot_arm_drum />
+        <xacro:robot_arm_drum/>
       </geometry>
     </visual>
     <inertial>
       <origin xyz="0 0 0" rpy="0 0 3.14159"/>
       <mass value="5"/>
-      <cylinder_inertia m="5" r="0.1839" h="1.0"/>
+      <xacro:cylinder_inertia m="5" r="0.1839" h="1.0"/>
     </inertial>
   </link>
 
@@ -217,13 +217,13 @@
     <collision name='collision'>
       <origin xyz="0 0 0" rpy=" 0 0 0"/>
       <geometry>
-        <link1/>
+        <xacro:link1/>
       </geometry>
     </collision>
     <visual name='link1'>
       <origin xyz="0 0 0" rpy=" 0 0 0"/>
       <geometry>
-        <link1/>
+        <xacro:link1/>
       </geometry>
     </visual>
   </link>
@@ -242,13 +242,13 @@
     <collision name='collision'>
       <origin xyz="0 0.08 0.135" rpy=" 0 0 0"/>
       <geometry>
-        <link2/>
+        <xacro:link2/>
       </geometry>
     </collision>
     <visual name='link2'>
       <origin xyz="0 0.08 0.135" rpy=" 0 0 0"/>
       <geometry>
-        <link2/>
+        <xacro:link2/>
       </geometry>
     </visual>
   </link>
@@ -267,13 +267,13 @@
     <collision name='collision'>
       <origin xyz="0.25 0.1 0" rpy=" 0 0 0"/>
       <geometry>
-        <link3/>
+        <xacro:link3/>
       </geometry>
     </collision>
     <visual name='link3'>
       <origin xyz="0.25 0.1 0" rpy=" 0 0 0"/>
       <geometry>
-        <link3/>
+        <xacro:link3/>
       </geometry>
     </visual>
   </link>
@@ -292,13 +292,13 @@
     <collision name='collision'>
       <origin xyz="0.23 0 0" rpy=" 0 0 0"/>
       <geometry>
-        <link4/>
+        <xacro:link4/>
       </geometry>
     </collision>
     <visual name='link4'>
       <origin xyz="0.23 0 0" rpy=" 0 0 0"/>
       <geometry>
-        <link4/>
+        <xacro:link4/>
       </geometry>
     </visual>
   </link>
@@ -317,13 +317,13 @@
     <collision name='collision'>
       <origin xyz="0 0.12 0" rpy=" 0 0 0"/>
       <geometry>
-        <link5/>
+        <xacro:link5/>
       </geometry>
     </collision>
     <visual name='link5'>
       <origin xyz="0 0.12 0" rpy=" 0 0 0"/>
       <geometry>
-        <link5/>
+        <xacro:link5/>
       </geometry>
     </visual>
   </link>
@@ -342,13 +342,13 @@
     <collision name='collision'>
       <origin xyz="0.096 0 -0.24" rpy=" 0 0 0"/>
       <geometry>
-        <link6/>
+        <xacro:link6/>
       </geometry>
     </collision>
     <visual name='link6'>
       <origin xyz="0.096 0 -0.24" rpy=" 0 0 0"/>
       <geometry>
-        <link6/>
+        <xacro:link6/>
       </geometry>
     </visual>
   </link>
@@ -368,7 +368,7 @@
     <visual name='arm_camera'>
       <origin xyz="0.04 0.0 -0.04" rpy=" 0 0 0"/>
       <geometry>
-        <arm_camera/>
+        <xacro:arm_camera/>
       </geometry>
     </visual>
   </link>
@@ -387,7 +387,7 @@
     <collision name='collision'>
       <origin xyz="0 0 0" rpy=" 0 0 0"/>
       <geometry>
-        <grabber1/>
+        <xacro:grabber1/>
       </geometry>
       <contact_coefficients>
         <mu>1</mu>
@@ -410,7 +410,7 @@
     <visual name='grabber1'>
       <origin xyz="0 0 0" rpy=" 0 0 0"/>
       <geometry>
-        <grabber1/>
+        <xacro:grabber1/>
       </geometry>
     </visual>
   </link>
@@ -429,7 +429,7 @@
     <collision name='collision'>
       <origin xyz="0 0 0" rpy=" 0 0 0"/>
       <geometry>
-        <grabber2/>
+        <xacro:grabber2/>
       </geometry>
       <contact_coefficients>
         <mu>1</mu>
@@ -452,7 +452,7 @@
     <visual name='grabber2'>
       <origin xyz="0 0 0" rpy=" 0 0 0"/>
       <geometry>
-        <grabber2/>
+        <xacro:grabber2/>
       </geometry>
     </visual>
   </link>
@@ -471,7 +471,7 @@
     <visual name='arm_front'>
       <origin xyz="0.2 0 0" rpy=" 0 -0.60 0"/>
       <geometry>
-        <drum_arm/>
+        <xacro:drum_arm/>
       </geometry>
     </visual>
   </link>
@@ -499,12 +499,13 @@
     <visual name='platform'>
       <origin xyz="0.1 0.06 0.1" rpy=" 0 0 0"/>
       <geometry>
-        <platform/>
+        <xacro:platform/>
       </geometry>
     </visual>
   </link>
 	
   <!-- Transmissions -->
+  <!--
   <transmission name="left_wheel_front_tran">
     <type>transmission_interface/SimpleTransmission</type>
     <joint name="left_wheel_front_hinge">
@@ -648,7 +649,7 @@
       <mechanicalReduction>1</mechanicalReduction>
     </actuator>
   </transmission>
-
+  -->
 
   <!-- Front Camera Added -->
   <link name="depth_camera_front">
@@ -670,7 +671,7 @@
     <inertial>
       <mass value="${cameraMass}" />
       <origin xyz="0 0 0" rpy="0 0 0"/>
-      <box_inertia m="${cameraMass}" x="${cameraSize}" y="${cameraSize}" z="${cameraSize}" />
+      <xacro:box_inertia m="${cameraMass}" x="${cameraSize}" y="${cameraSize}" z="${cameraSize}" />
       <inertia ixx="1e-6" ixy="0" ixz="0" iyy="1e-6" iyz="0" izz="1e-6" />
     </inertial>
   </link>
@@ -694,7 +695,7 @@
     <inertial>
       <mass value="${cameraMass}" />
       <origin xyz="0 0 0" rpy="0 0 0"/>
-      <box_inertia m="${cameraMass}" x="${cameraSize}" y="${cameraSize}" z="${cameraSize}" />
+      <xacro:box_inertia m="${cameraMass}" x="${cameraSize}" y="${cameraSize}" z="${cameraSize}" />
       <inertia ixx="1e-6" ixy="0" ixz="0" iyy="1e-6" iyz="0" izz="1e-6" />
     </inertial>
   </link>
@@ -727,7 +728,7 @@
   </joint>
   <link name="depth_camera_optical_frame"/>
 
-  <joint type="continuous" name="left_wheel_front_hinge">
+  <joint type="continuous" name="left_wheel_front_joint">
     <origin xyz="0.20 0.285 0" rpy="0 0 0"/>
     <child link="left_wheel_front"/>
     <parent link="base_link"/>
@@ -736,7 +737,7 @@
     <joint_properties damping="0.0" friction="0.0"/>
   </joint>
 
-  <joint type="continuous" name="right_wheel_front_hinge">
+  <joint type="continuous" name="right_wheel_front_joint">
     <origin xyz="0.20 -0.285 0" rpy="0 0 0"/>
     <child link="right_wheel_front"/>
     <parent link="base_link"/>
@@ -745,7 +746,7 @@
     <joint_properties damping="0.0" friction="0.0"/>
   </joint>
 
-  <joint type="continuous" name="left_wheel_back_hinge">
+  <joint type="continuous" name="left_wheel_back_joint">
     <origin xyz="-0.20 0.285 0" rpy="0 0 0"/>
     <child link="left_wheel_back"/>
     <parent link="base_link"/>
@@ -754,7 +755,7 @@
     <joint_properties damping="0.0" friction="0.0"/>
   </joint>
 
-  <joint type="continuous" name="right_wheel_back_hinge">
+  <joint type="continuous" name="right_wheel_back_joint">
     <origin xyz="-0.20 -0.285 0" rpy="0 0 0"/>
     <child link="right_wheel_back"/>
     <parent link="base_link"/>
@@ -764,7 +765,7 @@
   </joint>
 
   
-  <joint type="continuous" name="arm_back_hinge">
+  <joint type="continuous" name="arm_back_joint">
     <origin xyz="-0.20 0 0" rpy="0 0 0"/>
     <child link="arm_back"/>
     <parent link="base_link"/>
@@ -774,7 +775,7 @@
   </joint>
 
 
-  <joint type="continuous" name="drum_back_hinge">
+  <joint type="continuous" name="drum_back_joint">
     <origin xyz="-0.388245 0 0" rpy="3.1415 0 0"/>
     <child link="drum_back"/>
     <parent link="arm_back"/>
@@ -873,13 +874,132 @@
     <limit lower="-0.02" upper="0.0225" effort="10" velocity="0.005"/>
   </joint>
 
-  <ros2_control_arm_joint1/>
-  <ros2_control_arm_joint2/>
-  <ros2_control_arm_joint3/>
-  <ros2_control_arm_joint4/>
-  <ros2_control_arm_joint5/>
-  <ros2_control_arm_grabber1/>
-  <ros2_control_arm_grabber2/>
+  <ros2_control name="GazeboSystem" type="system">
+            <hardware>
+                <plugin>gazebo_ros2_control/GazeboSystem</plugin>
+            </hardware>
+            <joint name="joint1">
+                <command_interface name="position">
+                    <param name="min">-15</param>
+                    <param name="max">15</param>
+                </command_interface>
+                <state_interface name="position">
+                    <param name="initial_value">1.0</param>
+                </state_interface>
+                <state_interface name="velocity"/>
+                <state_interface name="effort"/>
+            </joint>
+            <joint name="joint2">
+                <command_interface name="position">
+                    <param name="min">-15</param>
+                    <param name="max">15</param>
+                </command_interface>
+                <state_interface name="position">
+                    <param name="initial_value">1.0</param>
+                </state_interface>
+                <state_interface name="velocity"/>
+                <state_interface name="effort"/>
+            </joint>
+            <joint name="joint3">
+                <command_interface name="position">
+                    <param name="min">-15</param>
+                    <param name="max">15</param>
+                </command_interface>
+                <state_interface name="position">
+                    <param name="initial_value">1.0</param>
+                </state_interface>
+                <state_interface name="velocity"/>
+                <state_interface name="effort"/>
+            </joint>
+            <joint name="joint4">
+                <command_interface name="position">
+                    <param name="min">-15</param>
+                    <param name="max">15</param>
+                </command_interface>
+                <state_interface name="position">
+                    <param name="initial_value">1.0</param>
+                </state_interface>
+                <state_interface name="velocity"/>
+                <state_interface name="effort"/>
+            </joint>
+            <joint name="joint5">
+                <command_interface name="position">
+                    <param name="min">-15</param>
+                    <param name="max">15</param>
+                </command_interface>
+                <state_interface name="position">
+                    <param name="initial_value">1.0</param>
+                </state_interface>
+                <state_interface name="velocity"/>
+                <state_interface name="effort"/>
+            </joint>
+            <joint name="grabber_joint1">
+                <command_interface name="effort">
+                    <param name="min">-1000</param>
+                    <param name="max">1000</param>
+                </command_interface>
+                <state_interface name="position"/>
+                <state_interface name="velocity"/>
+                <state_interface name="effort"/>
+            </joint>
+            <joint name="grabber_joint2">
+                <command_interface name="effort">
+                    <param name="min">-1000</param>
+                    <param name="max">1000</param>
+                </command_interface>
+                <state_interface name="position"/>
+                <state_interface name="velocity"/>
+                <state_interface name="effort"/>
+            </joint>
+            <joint name="left_wheel_front_joint">
+            <command_interface name="velocity">
+                <param name="min">-10</param>
+                <param name="max">10</param>
+            </command_interface>
+            <state_interface name="position" />
+            <state_interface name="velocity" />
+        </joint>
+        <joint name="left_wheel_back_joint">
+            <command_interface name="velocity">
+                <param name="min">-10</param>
+                <param name="max">10</param>
+            </command_interface>
+            <state_interface name="position" />
+            <state_interface name="velocity" />
+        </joint>
+        <joint name="right_wheel_front_joint">
+            <command_interface name="velocity">
+                <param name="min">-10</param>
+                <param name="max">10</param>
+            </command_interface>
+            <state_interface name="position" />
+            <state_interface name="velocity" />
+        </joint>
+        <joint name="right_wheel_back_joint">
+            <command_interface name="velocity">
+                <param name="min">-10</param>
+                <param name="max">10</param>
+            </command_interface>
+            <state_interface name="position" />
+            <state_interface name="velocity" />
+        </joint>
+        <joint name="arm_back_joint">
+            <command_interface name="velocity">
+                <param name="min">-10</param>
+                <param name="max">10</param>
+            </command_interface>
+            <state_interface name="position" />
+            <state_interface name="velocity" />
+        </joint>
+        <joint name="drum_back_joint">
+            <command_interface name="velocity">
+                <param name="min">-10</param>
+                <param name="max">10</param>
+            </command_interface>
+            <state_interface name="position" />
+            <state_interface name="velocity" />
+        </joint>
+        </ros2_control>
 
   <gazebo>
     <plugin filename="libgazebo_ros2_control.so" name="gazebo_ros2_control">

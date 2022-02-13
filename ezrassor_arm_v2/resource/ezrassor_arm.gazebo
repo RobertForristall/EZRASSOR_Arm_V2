@@ -87,11 +87,11 @@
       <plugin name="depth_camera_front_controller" filename="libgazebo_ros_camera.so">
         <ros>
             <namespace>ezrassor</namespace>
-            <argument>image_raw:=front_image</argument>
-            <argument>image_depth:=front_image_depth</argument>
-            <argument>camera_info:=front_info_raw</argument>
-            <argument>camera_info_depth:=front_info_depth</argument>
-            <argument>points:=front_points</argument>
+            <argument>--ros-args --remap image_raw:=front_image</argument>
+            <argument>--ros-args --remap image_depth:=front_image_depth</argument>
+            <argument>--ros-args --remap camera_info:=front_info_raw</argument>
+            <argument>--ros-args --remap camera_info_depth:=front_info_depth</argument>
+            <argument>--ros-args --remap points:=front_points</argument>
           </ros>
 
           <!-- Set camera name. If empty, defaults to sensor name (i.e. "sensor_name") -->
@@ -129,11 +129,11 @@
       <plugin name="depth_camera_front_controller" filename="libgazebo_ros_camera.so">
         <ros>
             <namespace>ezrassor</namespace>
-            <argument>image_raw:=arm_image</argument>
-            <argument>image_depth:=arm_image_depth</argument>
-            <argument>camera_info:=arm_info_raw</argument>
-            <argument>camera_info_depth:=arm_info_depth</argument>
-            <argument>points:=arm_points</argument>
+            <argument>--ros-args --remap image_raw:=arm_image</argument>
+            <argument>--ros-args --remap image_depth:=arm_image_depth</argument>
+            <argument>--ros-args --remap camera_info:=arm_info_raw</argument>
+            <argument>--ros-args --remap camera_info_depth:=arm_info_depth</argument>
+            <argument>--ros-args --remap points:=arm_points</argument>
           </ros>
 
           <!-- Set camera name. If empty, defaults to sensor name (i.e. "sensor_name") -->
@@ -162,7 +162,7 @@
       <ros>
         <!-- Will publish to /imu/data -->
         <namespace>/imu</namespace>
-        <argument>~/out:=data</argument>
+        <argument>--ros-args --remap ~/out:=data</argument>
       </ros>
       <frame_name>imu_link</frame_name>
     </plugin>

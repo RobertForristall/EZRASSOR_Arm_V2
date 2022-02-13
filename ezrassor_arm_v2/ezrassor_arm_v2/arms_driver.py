@@ -12,6 +12,7 @@ listen to the same istructions topic and command actuators, instead of the sim.
 """
 import std_msgs.msg
 import rclpy
+import sys
 
 NODE = "arms_driver"
 FRONT_ARMS_EXTERNAL_TOPIC = "front_arm_instructions"
@@ -45,28 +46,42 @@ def main(passed_args=None):
     try:
         rclpy.init(args=passed_args)
         node = rclpy.create_node(NODE)
+        model = sys.argv[1]
 
-        # Create publishers to Gazebo velocity managers.
-        publishers[FRONT_ARMS_INTERNAL_TOPIC] = node.create_publisher(
-            std_msgs.msg.Float64, FRONT_ARMS_INTERNAL_TOPIC, QUEUE_SIZE
-        )
-        publishers[BACK_ARMS_INTERNAL_TOPIC] = node.create_publisher(
-            std_msgs.msg.Float64, BACK_ARMS_INTERNAL_TOPIC, QUEUE_SIZE
-        )
+        if (model == 'arm'):
+            publishers[BACK_ARMS_INTERNAL_TOPIC] = node.create_publisher(
+                std_msgs.msg.Float64, BACK_ARMS_INTERNAL_TOPIC, QUEUE_SIZE
+            )
 
-        # Create subscriptions to listen for specific robot actions from users.
-        node.create_subscription(
-            std_msgs.msg.Float64,
-            FRONT_ARMS_EXTERNAL_TOPIC,
-            handle_front_arm_movements,
-            QUEUE_SIZE,
-        )
-        node.create_subscription(
-            std_msgs.msg.Float64,
-            BACK_ARMS_EXTERNAL_TOPIC,
-            handle_front_arm_movements,
-            QUEUE_SIZE,
-        )
+            node.create_subscription(
+                std_msgs.msg.Float64,
+                BACK_ARMS_EXTERNAL_TOPIC,
+                handle_front_arm_movements,
+                QUEUE_SIZE,
+            )
+        else:
+
+            # Create publishers to Gazebo velocity managers.
+            publishers[FRONT_ARMS_INTERNAL_TOPIC] = node.create_publisher(
+                std_msgs.msg.Float64, FRONT_ARMS_INTERNAL_TOPIC, QUEUE_SIZE
+            )
+            publishers[BACK_ARMS_INTERNAL_TOPIC] = node.create_publisher(
+                std_msgs.msg.Float64, BACK_ARMS_INTERNAL_TOPIC, QUEUE_SIZE
+            )
+
+            # Create subscriptions to listen for specific robot actions from users.
+            node.create_subscription(
+                std_msgs.msg.Float64,
+                FRONT_ARMS_EXTERNAL_TOPIC,
+                handle_front_arm_movements,
+                QUEUE_SIZE,
+            )
+            node.create_subscription(
+                std_msgs.msg.Float64,
+                BACK_ARMS_EXTERNAL_TOPIC,
+                handle_front_arm_movements,
+                QUEUE_SIZE,
+            )
 
         node.get_logger().info("arms_driver node created successfully")
 
