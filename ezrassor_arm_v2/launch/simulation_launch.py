@@ -1,5 +1,6 @@
 from ast import arguments
 from http.server import executable
+from multiprocessing import Condition
 import os
 from launch import LaunchDescription
 from launch.actions import DeclareLaunchArgument
@@ -9,7 +10,7 @@ from launch_ros.actions import Node
 from launch.launch_description_sources import PythonLaunchDescriptionSource
 from ament_index_python.packages import get_package_share_directory
 from launch.event_handlers import OnProcessExit
-from launch.conditions import (LaunchConfigurationEquals)
+from launch.conditions import (LaunchConfigurationEquals, LaunchConfigurationNotEquals, IfCondition, UnlessCondition)
 import xacro
 
 def generate_launch_description():
@@ -18,13 +19,14 @@ def generate_launch_description():
     
     pkg_ezrassor_arm_v2 = get_package_share_directory('ezrassor_arm_v2')
     
-    #if (LaunchConfiguration('rover_model') == 'arm'):
-    #    model_uri = os.path.join(pkg_ezrassor_arm_v2, 'resource/ezrassor_arm_v2.xacro')
-    #else:
-    #    model_uri = os.path.join(pkg_ezrassor_arm_v2, 'resource/ezrassor.xacro')
-    model_uri = os.path.join(pkg_ezrassor_arm_v2, 'resource/ezrassor_arm_v2.xacro')
-    ezrassor_description_config = xacro.process_file(model_uri)
-    content = ezrassor_description_config.toxml()
+    
+    model_uri_arm = os.path.join(pkg_ezrassor_arm_v2, 'resource/ezrassor_arm_v2.xacro')
+    ezrassor_arm_description_config = xacro.process_file(model_uri_arm)
+    arm_content = ezrassor_arm_description_config.toxml()
+
+    model_uri_standard = os.path.join(pkg_ezrassor_arm_v2, 'resource/ezrassor.xacro')
+    ezrassor_standard_description_config = xacro.process_file(model_uri_standard)
+    standard_content = ezrassor_standard_description_config.toxml()
 
     gazebo = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(
@@ -39,28 +41,35 @@ def generate_launch_description():
         output='screen'
     )
 
-    control_node = Node(
-            package="controller_manager",
-            executable="ros2_control_node",
-            parameters=[{"robot_description": content}],
-            output={
-                "stdout": "screen",
-                "stderr": "screen",
-            },
-        ),
+    robot_state_publisher_arm = Node(
+            package="robot_state_publisher",
+            executable="robot_state_publisher",
+            namespace='ezrassor',
+            output="screen",
+            parameters=[{"robot_description": arm_content}],
+            condition = LaunchConfigurationEquals('rover_model', 'arm')
+        )
 
-    if (LaunchConfiguration('rover_model') == 'arm'):
-        drivers = [
+    robot_state_publisher_standard = Node(
+            package="robot_state_publisher",
+            executable="robot_state_publisher",
+            namespace='ezrassor',
+            output="screen",
+            parameters=[{"robot_description": standard_content}],
+            condition = LaunchConfigurationNotEquals('rover_model', 'arm')
+        )
+
+    drivers = [
             Node(
                 package='ezrassor_arm_v2',
                 executable='arms_driver',
-                arguments=['arm'],
+                arguments=[LaunchConfiguration('rover_model')],
                 output='screen'
             ),
             Node(
                 package='ezrassor_arm_v2',
                 executable='drums_driver',
-                arguments=['arm'],
+                arguments=[LaunchConfiguration('rover_model')],
                 output='screen'
             ),
             Node(
@@ -71,29 +80,11 @@ def generate_launch_description():
             Node(
                 package='ezrassor_arm_v2',
                 executable='paver_arm_driver',
-                output='screen'
+                output='screen',
+                condition = LaunchConfigurationEquals('rover_model', 'arm')
             )     
         ]
-    else:
-        drivers = [
-            Node(
-                package='ezrassor_arm_v2',
-                executable='arms_driver',
-                arguments=['standard'],
-                output='screen'
-            ),
-            Node(
-                package='ezrassor_arm_v2',
-                executable='drums_driver',
-                arguments=['standard'],
-                output='screen'
-            ),
-            Node(
-                package='ezrassor_arm_v2',
-                executable='wheels_driver',
-                output='screen'
-            ),    
-        ]
+
 
     load_joint_state_controller = ExecuteProcess(
         cmd=['ros2', 'control', 'load_controller',"-c", "/ezrassor/controller_manager", '--set-state', 'start', 'joint_state_broadcaster'],
@@ -240,12 +231,11 @@ def generate_launch_description():
         ),
         gazebo,
         spawn_entity,
-        Node(
-            package="robot_state_publisher",
-            executable="robot_state_publisher",
-            namespace='ezrassor',
-            output="screen",
-            parameters=[{"robot_description": content}],
+        RegisterEventHandler(
+            event_handler=OnProcessExit(
+                target_action=spawn_entity,
+                on_exit=[robot_state_publisher_arm,robot_state_publisher_standard],
+            )
         ),
         RegisterEventHandler(
             event_handler=OnProcessExit(

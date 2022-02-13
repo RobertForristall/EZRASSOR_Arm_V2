@@ -413,7 +413,7 @@
   </joint>
   <link name="depth_camera_optical_frame"/>
 
-  <joint type="continuous" name="left_wheel_front_hinge">
+  <joint type="continuous" name="left_wheel_front_joint">
     <origin xyz="0.20 0.285 0" rpy="0 0 0"/>
     <child link="left_wheel_front"/>
     <parent link="base_link"/>
@@ -422,7 +422,7 @@
     <joint_properties damping="0.0" friction="0.0"/>
   </joint>
 
-  <joint type="continuous" name="right_wheel_front_hinge">
+  <joint type="continuous" name="right_wheel_front_joint">
     <origin xyz="0.20 -0.285 0" rpy="0 0 0"/>
     <child link="right_wheel_front"/>
     <parent link="base_link"/>
@@ -431,7 +431,7 @@
     <joint_properties damping="0.0" friction="0.0"/>
   </joint>
 
-  <joint type="continuous" name="left_wheel_back_hinge">
+  <joint type="continuous" name="left_wheel_back_joint">
     <origin xyz="-0.20 0.285 0" rpy="0 0 0"/>
     <child link="left_wheel_back"/>
     <parent link="base_link"/>
@@ -440,7 +440,7 @@
     <joint_properties damping="0.0" friction="0.0"/>
   </joint>
 
-  <joint type="continuous" name="right_wheel_back_hinge">
+  <joint type="continuous" name="right_wheel_back_joint">
     <origin xyz="-0.20 -0.285 0" rpy="0 0 0"/>
     <child link="right_wheel_back"/>
     <parent link="base_link"/>
@@ -449,7 +449,7 @@
     <joint_properties damping="0.0" friction="0.0"/>
   </joint>
 
-  <joint type="continuous" name="arm_front_hinge">
+  <joint type="continuous" name="arm_front_joint">
     <origin xyz="0.20 0 0" rpy="3.1415 0 0"/>
     <child link="arm_front"/>
     <parent link="base_link"/>
@@ -458,7 +458,7 @@
     <joint_properties damping="0.0" friction="0.0"/>
   </joint>
 
-  <joint type="continuous" name="arm_back_hinge">
+  <joint type="continuous" name="arm_back_joint">
     <origin xyz="-0.20 0 0" rpy="0 0 0"/>
     <child link="arm_back"/>
     <parent link="base_link"/>
@@ -467,7 +467,7 @@
     <joint_properties damping="0.0" friction="0.0"/>
   </joint>
 
-  <joint type="continuous" name="drum_front_hinge">
+  <joint type="continuous" name="drum_front_joint">
     <origin xyz="0.388245 0 0" rpy="3.1415 0 0"/>
     <child link="drum_front"/>
     <parent link="arm_front"/>
@@ -476,7 +476,7 @@
     <joint_properties damping="0.0" friction="0.0"/>
   </joint>
 
-  <joint type="continuous" name="drum_back_hinge">
+  <joint type="continuous" name="drum_back_joint">
     <origin xyz="-0.388245 0 0" rpy="3.1415 0 0"/>
     <child link="drum_back"/>
     <parent link="arm_back"/>

@@ -1,4 +1,3 @@
-from source.arms_driver.__main__ import QUEUE_SIZE
 import std_msgs.msg
 import rclpy
 
