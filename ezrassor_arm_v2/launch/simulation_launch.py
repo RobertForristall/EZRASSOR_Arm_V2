@@ -28,16 +28,28 @@ def generate_launch_description():
     ezrassor_standard_description_config = xacro.process_file(model_uri_standard)
     standard_content = ezrassor_standard_description_config.toxml()
 
+
     gazebo = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(
             os.path.join(pkg_gazebo_ros, 'launch', 'gazebo.launch.py'),
         )
     )
 
+    spawn_entity_args = [
+        LaunchConfiguration('rover_model'), 
+        LaunchConfiguration('robot_count'), 
+        LaunchConfiguration('spawn_x_coords'), 
+        LaunchConfiguration('spawn_y_coords'), 
+        LaunchConfiguration('spawn_z_coords'), 
+        LaunchConfiguration('spawn_roll'), 
+        LaunchConfiguration('spawn_pitch'), 
+        LaunchConfiguration('spawn_yaw')
+    ]
+
     spawn_entity = Node(
         package='ezrassor_arm_v2',
         executable ='spawn_rover',
-        arguments=[LaunchConfiguration('rover_model'), LaunchConfiguration('robot_count'), LaunchConfiguration('spawn_x_coords'), LaunchConfiguration('spawn_y_coords'), LaunchConfiguration('spawn_z_coords'), LaunchConfiguration('spawn_roll'), LaunchConfiguration('spawn_pitch'), LaunchConfiguration('spawn_yaw')],
+        arguments=spawn_entity_args,
         output='screen'
     )
 
@@ -58,6 +70,44 @@ def generate_launch_description():
             parameters=[{"robot_description": standard_content}],
             condition = LaunchConfigurationNotEquals('rover_model', 'arm')
         )
+
+    keyboard_controls = Node(
+        package='ezrassor_arm_v2',
+        executable='keyboard_controls',
+        arguments=[LaunchConfiguration('rover_model')],
+        output='screen',
+        condition = LaunchConfigurationEquals('control_methods', 'keyboard')
+    )
+
+
+
+    autonomous_args = [
+        LaunchConfiguration('rover_model'),
+        LaunchConfiguration('target_x_coords'),
+        LaunchConfiguration('target_y_coords'),
+        LaunchConfiguration('spawn_x_coords'),
+        LaunchConfiguration('spawn_y_coords'),
+        LaunchConfiguration('enable_real_odometry'),
+        LaunchConfiguration('enable_park_ranger'),
+        LaunchConfiguration('enable_swarm_control'),
+        LaunchConfiguration('world'),   
+    ]
+
+    autonomous_controls = Node(
+        package='ezrassor_arm_v2',
+        executable='autonomous_controls',
+        arguments=autonomous_args,
+        output='screen',
+        condition = LaunchConfigurationEquals('control_methods', 'autonomous')
+    )
+
+    gamepad_controls = Node(
+        package='ezrassor_arm_v2',
+        executable='gamepad_controls',
+        arguments=[LaunchConfiguration('rover_model'), LaunchConfiguration('port')],
+        output='screen',
+        condition = LaunchConfigurationEquals('control_methods', 'gamepad')
+    )
 
     drivers = [
             Node(
@@ -221,13 +271,18 @@ def generate_launch_description():
         ),
         DeclareLaunchArgument(
             'enable_real_odometry',
-            default_value=['default', ''],
+            default_value=['false', ''],
             description='Enable the real odometry package for the rover'
         ),
         DeclareLaunchArgument(
             'enable_park_ranger',
-            default_value=['default', ''],
+            default_value=['false', ''],
             description='Enable the park ranger package for the rover'
+        ),
+        DeclareLaunchArgument(
+            'enable_swarm_control',
+            default_value=['false', ''],
+            description='Enable swarm controls package for the rover'
         ),
         gazebo,
         spawn_entity,

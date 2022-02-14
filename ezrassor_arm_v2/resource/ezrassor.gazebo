@@ -86,16 +86,16 @@
       </camera>
       <plugin name="depth_camera_front_controller" filename="libgazebo_ros_camera.so">
         <ros>
-            <namespace>custom_ns</namespace>
-            <argument>image_raw:=custom_image</argument>
-            <argument>image_depth:=custom_image_depth</argument>
-            <argument>camera_info:=custom_info_raw</argument>
-            <argument>camera_info_depth:=custom_info_depth</argument>
-            <argument>points:=custom_points</argument>
+            <namespace>ezrassor</namespace>
+            <argument>--ros-args --remap image_raw:=front_image</argument>
+            <argument>--ros-args --remap image_depth:=front_image_depth</argument>
+            <argument>--ros-args --remap camera_info:=front_info_raw</argument>
+            <argument>--ros-args --remap camera_info_depth:=front_info_depth</argument>
+            <argument>--ros-args --remap points:=front_points</argument>
           </ros>
 
           <!-- Set camera name. If empty, defaults to sensor name (i.e. "sensor_name") -->
-          <camera_name>custom_camera</camera_name>
+          <camera_name>front_camera</camera_name>
 
           <!-- Set TF frame name. If empty, defaults to link name (i.e. "link_name") -->
           <frame_name>depth_camera_front</frame_name>
