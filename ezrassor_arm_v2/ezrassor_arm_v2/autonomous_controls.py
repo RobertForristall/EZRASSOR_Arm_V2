@@ -79,6 +79,6 @@ def main(args=None):
 
     if (standard_controller_args[0] == 'arm'):
         controller_arm = PaverArmRoverController(topics=topics)
-        controller = StandardRoverController(topics=topics, args=standard_controller_args)
+        #controller = StandardRoverController(topics=topics, args=standard_controller_args)
     else:
         controller = StandardRoverController(topics=topics, args=standard_controller_args)

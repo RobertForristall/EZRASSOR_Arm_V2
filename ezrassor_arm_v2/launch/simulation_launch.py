@@ -1,40 +1,146 @@
-from ast import arguments
-from http.server import executable
-from multiprocessing import Condition
+# Node for starting the ezrassor_arm_v2 package through a gazebo simulation
+
 import os
 from launch import LaunchDescription
 from launch.actions import DeclareLaunchArgument
 from launch.actions import (IncludeLaunchDescription, ExecuteProcess, RegisterEventHandler)
-from launch.substitutions import (LaunchConfiguration, PythonExpression)
+from launch.substitutions import (LaunchConfiguration)
 from launch_ros.actions import Node
 from launch.launch_description_sources import PythonLaunchDescriptionSource
 from ament_index_python.packages import get_package_share_directory
 from launch.event_handlers import OnProcessExit
-from launch.conditions import (LaunchConfigurationEquals, LaunchConfigurationNotEquals, IfCondition, UnlessCondition)
+from launch.conditions import (LaunchConfigurationEquals, LaunchConfigurationNotEquals)
 import xacro
+import yaml
+
+# Functions for handling/loading yaml files for moveit configuration
+def load_yaml(pkg_path, file):
+    file_uri = os.path.join(pkg_path, 'config', file)
+    
+    try:
+        with open(file_uri) as file:
+            return yaml.safe_load(file)
+    except OSError:
+        return None
 
 def generate_launch_description():
 
+    # Package path for gazebo_ros to spawn the simulation enviornment
     pkg_gazebo_ros = get_package_share_directory('gazebo_ros')
     
+    # Package path for the ezrassor_arm_v2 package
     pkg_ezrassor_arm_v2 = get_package_share_directory('ezrassor_arm_v2')
     
-    
+    # Model content for the paver arm rover model to be used with the robot state publisher
     model_uri_arm = os.path.join(pkg_ezrassor_arm_v2, 'resource/ezrassor_arm_v2.xacro')
     ezrassor_arm_description_config = xacro.process_file(model_uri_arm)
     arm_content = ezrassor_arm_description_config.toxml()
 
+    # Model content for the standard rover model to be used with the robot state publisher
     model_uri_standard = os.path.join(pkg_ezrassor_arm_v2, 'resource/ezrassor.xacro')
     ezrassor_standard_description_config = xacro.process_file(model_uri_standard)
     standard_content = ezrassor_standard_description_config.toxml()
 
+    # Model content for the paver arm rover model to be used with moveit
+    moveit_model_uri_arm = os.path.join(pkg_ezrassor_arm_v2, 'resource/arm_model.urdf')
+    moveit_ezrassor_arm_description_config = xacro.process_file(moveit_model_uri_arm)
+    moveit_arm_content = moveit_ezrassor_arm_description_config.toxml()
+    
+    # Semantic model content for the paver arm rover model to be used with moveit
+    semantic_arm_uri = os.path.join(pkg_ezrassor_arm_v2, 'config/ezrassor.srdf' )
+    semantic_ezrassor_arm_description_config = xacro.process_file(semantic_arm_uri)
+    semantic_arm_content = semantic_ezrassor_arm_description_config.toxml()
 
+    # Setting up robot descriptions for moveit model and semantic moveit model
+    robot_description = {'robot_description': moveit_arm_content}
+    robot_description_semantic = {"robot_description_semantic": semantic_arm_content}
+
+    # Kinematics configuration for moveit
+    kinematics_yaml = load_yaml(pkg_ezrassor_arm_v2, 'kinematics.yaml')    
+    robot_description_kinematics = {'robot_description_kinematics': kinematics_yaml}
+    
+    # Joint limit configurations for moveit
+    joint_limit_yaml = load_yaml(pkg_ezrassor_arm_v2, 'joint_limits.yaml')
+    robot_description_planning = {'robot_description_planning': joint_limit_yaml}
+    
+    # Planning scene configurations for moveit
+    ompl_planning_pipeline_config = {
+        "move_group": {
+            "planning_plugin": "ompl_interface/OMPLPlanner",
+            "request_adapters": "default_planner_request_adapters/AddTimeOptimalParameterization default_planner_request_adapters/FixWorkspaceBounds default_planner_request_adapters/FixStartStateBounds default_planner_request_adapters/FixStartStateCollision default_planner_request_adapters/FixStartStatePathConstraints",
+            "start_state_max_bounds_error": 0.1,
+        }
+    }
+    ompl_yaml = load_yaml(pkg_ezrassor_arm_v2, 'ompl_planning.yaml')
+    ompl_planning_pipeline_config['move_group'].update(ompl_yaml)
+    
+    # Controllers configurations for moveit
+    controllers_yaml = load_yaml(pkg_ezrassor_arm_v2, 'controllers.yaml')
+    moveit_controllers = {
+        "moveit_simple_controller_manager": controllers_yaml,
+        "moveit_controller_manager": "moveit_simple_controller_manager/MoveItSimpleControllerManager",
+    }
+    
+    # Trajectory execution configuration for moveit
+    trajectory_execution = {
+        "moveit_manage_controllers": False,
+        "trajectory_execution.allowed_execution_duration_scaling": 1.2,
+        "trajectory_execution.allowed_goal_duration_margin": 0.5,
+        "trajectory_execution.allowed_start_tolerance": 0.01,
+    }
+
+    # Planning scene monitoring configuration for moveit
+    planning_scene_monitor_parameters = {
+        "publish_planning_scene": True,
+        "publish_geometry_updates": True,
+        "publish_state_updates": True,
+        "publish_transforms_updates": True,
+        "planning_scene_monitor_options": {
+            "name": "planning_scene_monitor",
+            "robot_description": "robot_description",
+            "joint_state_topic": "/joint_states",
+            "attached_collision_object_topic": "/move_group/planning_scene_monitor",
+            "publish_planning_scene_topic": "/move_group/publish_planning_scene",
+            "monitored_planning_scene_topic": "/move_group/monitored_planning_scene",
+            "wait_for_initial_state_timeout": 10.0,
+        },
+    }
+    
+    # Launch the moveit node
+    move_group = Node(
+        package='moveit_ros_move_group',
+        executable='move_group',
+        output='screen',
+        parameters=[
+            robot_description,
+            robot_description_semantic,
+            robot_description_kinematics,
+            robot_description_planning,
+            ompl_planning_pipeline_config,
+            trajectory_execution,
+            moveit_controllers,
+            planning_scene_monitor_parameters
+        ],
+        condition=LaunchConfigurationEquals('rover_model', 'arm')
+    )
+
+    static_tf = Node(
+        package="tf2_ros",
+        executable="static_transform_publisher",
+        name="static_transform_publisher",
+        output="log",
+        arguments=["0.0", "0.0", "0.0", "0.0", "0.0", "0.0", "world", "base_link"],
+        condition=LaunchConfigurationEquals('rover_model', 'arm')
+    )
+
+    # Include the gazebo sim launch file, to be called during launch to launch the simulation
     gazebo = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(
             os.path.join(pkg_gazebo_ros, 'launch', 'gazebo.launch.py'),
         )
     )
 
+    # Arguments for the spawn_entity node in the ezrassor_arm_v2 package
     spawn_entity_args = [
         LaunchConfiguration('rover_model'), 
         LaunchConfiguration('robot_count'), 
@@ -46,6 +152,7 @@ def generate_launch_description():
         LaunchConfiguration('spawn_yaw')
     ]
 
+    # Launch the spawn entity node 
     spawn_entity = Node(
         package='ezrassor_arm_v2',
         executable ='spawn_rover',
@@ -53,6 +160,8 @@ def generate_launch_description():
         output='screen'
     )
 
+    # Launch the robot state publisher for the paver arm rover model
+    # Only launches if the rover_model launch argument is set to 'arm'
     robot_state_publisher_arm = Node(
             package="robot_state_publisher",
             executable="robot_state_publisher",
@@ -62,6 +171,8 @@ def generate_launch_description():
             condition = LaunchConfigurationEquals('rover_model', 'arm')
         )
 
+    # Launch the robot state publisher for the standard rover model
+    # Only launches if the rover_model launch argument is set to 'standard' (which is the default setting)
     robot_state_publisher_standard = Node(
             package="robot_state_publisher",
             executable="robot_state_publisher",
@@ -71,6 +182,7 @@ def generate_launch_description():
             condition = LaunchConfigurationNotEquals('rover_model', 'arm')
         )
 
+    # Launch the keyboard_controls node of the ezrassor_arm_v2 package
     keyboard_controls = Node(
         package='ezrassor_arm_v2',
         executable='keyboard_controls',
@@ -79,8 +191,7 @@ def generate_launch_description():
         condition = LaunchConfigurationEquals('control_methods', 'keyboard')
     )
 
-
-
+    # Arguments for the autonomous_controls node in the ezrassor_arm_v2 package
     autonomous_args = [
         LaunchConfiguration('rover_model'),
         LaunchConfiguration('target_x_coords'),
@@ -93,6 +204,7 @@ def generate_launch_description():
         LaunchConfiguration('world'),   
     ]
 
+    # Launch the autonomous_controls node of the ezrassor_arm_v2 package
     autonomous_controls = Node(
         package='ezrassor_arm_v2',
         executable='autonomous_controls',
@@ -101,6 +213,7 @@ def generate_launch_description():
         condition = LaunchConfigurationEquals('control_methods', 'autonomous')
     )
 
+    # Launch the gamepad_controls node of the ezrassor_arm_v2 package
     gamepad_controls = Node(
         package='ezrassor_arm_v2',
         executable='gamepad_controls',
@@ -109,6 +222,7 @@ def generate_launch_description():
         condition = LaunchConfigurationEquals('control_methods', 'gamepad')
     )
 
+    # Array of launch commands with arguments/conditions to load the drivers needed for the desired rover model
     drivers = [
             Node(
                 package='ezrassor_arm_v2',
@@ -136,39 +250,59 @@ def generate_launch_description():
         ]
 
 
+    # Launch the joint_state_controller
     load_joint_state_controller = ExecuteProcess(
         cmd=['ros2', 'control', 'load_controller',"-c", "/ezrassor/controller_manager", '--set-state', 'start', 'joint_state_broadcaster'],
         output='screen'
     )
 
+    # Launch the paver_arm_trajectory_controller from the default positions controller configuration file
     load_paver_arm_trajectory_controller = ExecuteProcess(
         condition = LaunchConfigurationEquals('rover_model', 'arm'),
-        cmd=['ros2', 'control', 'load_controller',"-c", "/ezrassor/controller_manager", '--set-state', 'start', 'paver_arm_trajectory_controller'],
+        cmd=['ros2', 'control', 'load_controller',"-c", "/ezrassor/controller_manager", '--set-state', 'start', 'joint_trajectory_controller'],
         output='screen'
     )
 
+    # Launch the gripper_effort_controller from the default positions controller configuration file
     load_gripper_effort_controller = ExecuteProcess(
         condition = LaunchConfigurationEquals('rover_model', 'arm'),
         cmd=['ros2', 'control', 'load_controller',"-c", "/ezrassor/controller_manager", '--set-state', 'start', 'gripper_effort_controller'],
         output='screen'
     )
 
+    # Launch the diff_drive_controller from the default positions controller configuration file
     load_diff_drive_controller = ExecuteProcess(
         cmd=['ros2', 'control', 'load_controller',"-c", "/ezrassor/controller_manager", '--set-state', 'start', 'diff_drive_controller'],
         output='screen'
     )
 
+    # Launch the arm_back_velocity_controller from the default positions controller configuration file
     load_arm_back_velocity_controller = ExecuteProcess(
         cmd=['ros2', 'control', 'load_controller',"-c", "/ezrassor/controller_manager", '--set-state', 'start', 'arm_back_velocity_controller'],
         output='screen'
     )
-
+    # Launch the drum_back_velocity_controller from the default positions controller configuration file
     load_drum_back_velocity_controller = ExecuteProcess(
         cmd=['ros2', 'control', 'load_controller',"-c", "/ezrassor/controller_manager", '--set-state', 'start', 'drum_back_velocity_controller'],
         output='screen'
     )
 
+    # Launch the arm_front_velocity_controller from the default positions controller configuration file
+    load_arm_front_velocity_controller = ExecuteProcess(
+        condition = LaunchConfigurationEquals('rover_model', 'standard'),
+        cmd=['ros2', 'control', 'load_controller',"-c", "/ezrassor/controller_manager", '--set-state', 'start', 'arm_front_velocity_controller'],
+        output='screen'
+    )
+    # Launch the drum_front_velocity_controller from the default positions controller configuration file
+    load_drum_front_velocity_controller = ExecuteProcess(
+        condition = LaunchConfigurationEquals('rover_model', 'standard'),
+        cmd=['ros2', 'control', 'load_controller',"-c", "/ezrassor/controller_manager", '--set-state', 'start', 'drum_front_velocity_controller'],
+        output='screen'
+    )
+
     return LaunchDescription([
+
+        # All startup launch argumnets for managing models/controls/simulation
         DeclareLaunchArgument(
             'world',
             default_value=[os.path.join(pkg_ezrassor_arm_v2, 'worlds', 'base.world')],
@@ -284,6 +418,8 @@ def generate_launch_description():
             default_value=['false', ''],
             description='Enable swarm controls package for the rover'
         ),
+
+        # Spawn defined nodes above to process in the neccesary order
         gazebo,
         spawn_entity,
         RegisterEventHandler(
@@ -307,32 +443,21 @@ def generate_launch_description():
         RegisterEventHandler(
             event_handler=OnProcessExit(
                 target_action=load_joint_state_controller,
-                on_exit=[load_diff_drive_controller],
+                on_exit=[
+                    load_diff_drive_controller,
+                    load_arm_back_velocity_controller,
+                    load_arm_front_velocity_controller,
+                    load_drum_back_velocity_controller,
+                    load_drum_front_velocity_controller,
+                    load_gripper_effort_controller,
+                    load_paver_arm_trajectory_controller,
+                ],
             )
         ),
         RegisterEventHandler(
             event_handler=OnProcessExit(
-                target_action=load_joint_state_controller,
-                on_exit=[load_arm_back_velocity_controller],
+                target_action=load_paver_arm_trajectory_controller,
+                on_exit=[move_group, static_tf]
             )
-        ),
-        RegisterEventHandler(
-            event_handler=OnProcessExit(
-                target_action=load_joint_state_controller,
-                on_exit=[load_drum_back_velocity_controller],
-            )
-        ),
-        RegisterEventHandler(
-            event_handler=OnProcessExit(
-                target_action=load_joint_state_controller,
-                on_exit=[load_paver_arm_trajectory_controller],
-            )
-        ),
-        RegisterEventHandler(
-            event_handler=OnProcessExit(
-                target_action=load_joint_state_controller,
-                on_exit=[load_gripper_effort_controller],
-            )
-        ),
-            
+        ), 
     ])

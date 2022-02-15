@@ -874,6 +874,8 @@
     <limit lower="-0.02" upper="0.0225" effort="10" velocity="0.005"/>
   </joint>
 
+
+  <!-- ros2_control configuration for each joint to be used with Gazebo_ros2_control-->
   <ros2_control name="GazeboSystem" type="system">
             <hardware>
                 <plugin>gazebo_ros2_control/GazeboSystem</plugin>
@@ -1001,8 +1003,10 @@
         </joint>
         </ros2_control>
 
+  <!-- Include the gazebo_ros2_control plugin with paver arm rover model controllers-->
   <gazebo>
     <plugin filename="libgazebo_ros2_control.so" name="gazebo_ros2_control">
+      <robot_sim_type>gazebo_ros2_control/GazeboSystem</robot_sim_type>
       <parameters>$(find ezrassor_arm_v2)/config/paver_arm_rover/default_position_controllers.yaml</parameters>
     </plugin>
   </gazebo>
