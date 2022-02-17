@@ -23,6 +23,21 @@ def load_yaml(pkg_path, file):
     except OSError:
         return None
 
+#To be finished -- Testing function for multiple rovers controllers ---
+def generate_controllers(pkg_ezrassor_arm_v2, robot_description, robot_description_semantic, robot_description_kinematics, robot_description_planning, 
+ompl_planning_pipeline_config, trajectory_execution, moveit_controllers, planning_scene_monitor_parameters, rover_count):
+    move_group_nodes = []
+    for i in range(rover_count):
+        # Controllers configurations for moveit
+        controllers_yaml = load_yaml(pkg_ezrassor_arm_v2, 'controllers.yaml')
+        new_controller_name = '/ezrassor' + str(i) + '/' + 'joint_trajectory_controller'
+        controllers_yaml['controller_names'] = [new_controller_name]
+        controllers_yaml[new_controller_name] = controllers_yaml.pop('joint_trajectory_controller')
+        moveit_controllers = {
+            "moveit_simple_controller_manager": controllers_yaml,
+            "moveit_controller_manager": "moveit_simple_controller_manager/MoveItSimpleControllerManager",
+        }
+
 def generate_launch_description():
 
     # Package path for gazebo_ros to spawn the simulation enviornment
@@ -76,6 +91,9 @@ def generate_launch_description():
     
     # Controllers configurations for moveit
     controllers_yaml = load_yaml(pkg_ezrassor_arm_v2, 'controllers.yaml')
+    new_controller_name = '/ezrassor/' + 'joint_trajectory_controller'
+    controllers_yaml['controller_names'] = [new_controller_name]
+    controllers_yaml[new_controller_name] = controllers_yaml.pop('joint_trajectory_controller')
     moveit_controllers = {
         "moveit_simple_controller_manager": controllers_yaml,
         "moveit_controller_manager": "moveit_simple_controller_manager/MoveItSimpleControllerManager",
@@ -121,6 +139,13 @@ def generate_launch_description():
             moveit_controllers,
             planning_scene_monitor_parameters
         ],
+        condition=LaunchConfigurationEquals('rover_model', 'arm')
+    )
+
+    move_group_interface = Node(
+        package='ezrassor_arm_v2',
+        executable='move_group_interface',
+        output='screen',
         condition=LaunchConfigurationEquals('rover_model', 'arm')
     )
 
@@ -249,6 +274,11 @@ def generate_launch_description():
             )     
         ]
 
+    load_move_group_interface = ExecuteProcess(
+        cmd=['ros2', 'run', 'ezrassor_move_group_interface', 'move_group_interface'],
+        output='screen',
+        condition=LaunchConfigurationEquals('rover_model', 'arm')
+    )
 
     # Launch the joint_state_controller
     load_joint_state_controller = ExecuteProcess(
@@ -457,7 +487,7 @@ def generate_launch_description():
         RegisterEventHandler(
             event_handler=OnProcessExit(
                 target_action=load_paver_arm_trajectory_controller,
-                on_exit=[move_group, static_tf]
+                on_exit=[move_group, static_tf, load_move_group_interface]
             )
         ), 
     ])

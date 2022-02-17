@@ -29,9 +29,9 @@ joint_state_controller:
   publish_rate: 50
 
 controller_names:
-  - /ezrassor/joint_trajectory_controller
+  - joint_trajectory_controller
 
-/ezrassor/joint_trajectory_controller:
+joint_trajectory_controller:
   action_ns: follow_joint_trajectory
   type: FollowJointTrajectory
   default: true

@@ -65,20 +65,11 @@ class StandardRoverController(Node):
         )
     
     def auto_command_callback(data):
-        print()
-
-
-class PaverArmRoverController(Node):
-    def __init__(self, topics):
-        self.gripper_instructions_topic = topics[5]     
+        print()     
 
 
 def main(args=None):
     rclpy.init(args=args)
     standard_controller_args = sys.argv[1:10]
-
-    if (standard_controller_args[0] == 'arm'):
-        controller_arm = PaverArmRoverController(topics=topics)
-        #controller = StandardRoverController(topics=topics, args=standard_controller_args)
-    else:
-        controller = StandardRoverController(topics=topics, args=standard_controller_args)
+    controller = StandardRoverController(topics=topics, args=standard_controller_args)
+    
