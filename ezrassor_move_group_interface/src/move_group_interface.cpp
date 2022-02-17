@@ -8,7 +8,7 @@
 #include <moveit_msgs/msg/collision_object.hpp>
 
 #include <memory>
-
+#include <string.h>
 #include "rclcpp/rclcpp.hpp"
 #include "std_msgs/msg/string.hpp"
 using std::placeholders::_1;
@@ -23,6 +23,8 @@ class MinimalSubscriber : public rclcpp::Node
     {
       subscription_ = this->create_subscription<std_msgs::msg::String>(
       "move_group_interface/command", 10, std::bind(&MinimalSubscriber::topic_callback, this, _1));
+      moveit::planning_interface::MoveGroupInterface move_group(*this, "moveit_arm_controller");
+      planning_group = "moveit_arm_controller";
     }
 
   private:
@@ -33,12 +35,12 @@ class MinimalSubscriber : public rclcpp::Node
       }
     }
     rclcpp::Subscription<std_msgs::msg::String>::SharedPtr subscription_;
+    std::string planning_group;
 
     // Set the move group interface to use this node to communicate with the planning group's controller
-    moveit::planning_interface::MoveGroupInterface move_group(*this, "moveit_arm_controller");
 
     const moveit::core::JointModelGroup* joint_model_group = 
-        move_group.getCurrentState()->getJointModelGroup(planning_group);
+        move_group_ptr->getCurrentState()->getJointModelGroup(planning_group);
     
 
     // Function to move the arm to a desired pose

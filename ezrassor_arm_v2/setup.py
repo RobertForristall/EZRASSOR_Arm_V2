@@ -35,6 +35,7 @@ setup(
             "wheels_driver = ezrassor_arm_v2.wheels_driver:main",
             "drums_driver = ezrassor_arm_v2.drums_driver:main",
             "paver_arm_driver = ezrassor_arm_v2.paver_arm_driver:main",
+            "move_group_interface = ezrassor_arm_v2.move_group_interface:main"
         ],
     },
 )

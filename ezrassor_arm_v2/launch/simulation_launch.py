@@ -154,7 +154,7 @@ def generate_launch_description():
         executable="static_transform_publisher",
         name="static_transform_publisher",
         output="log",
-        arguments=["0.0", "0.0", "0.0", "0.0", "0.0", "0.0", "world", "base_link"],
+        arguments=["0.0", "0.0", "0.0", "0.0", "0.0", "0.0", "base_link", "link1"],
         condition=LaunchConfigurationEquals('rover_model', 'arm')
     )
 
@@ -487,7 +487,7 @@ def generate_launch_description():
         RegisterEventHandler(
             event_handler=OnProcessExit(
                 target_action=load_paver_arm_trajectory_controller,
-                on_exit=[move_group, static_tf, load_move_group_interface]
+                on_exit=[move_group, static_tf, move_group_interface]
             )
         ), 
     ])
