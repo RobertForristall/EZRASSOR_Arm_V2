@@ -739,7 +739,7 @@
   <!-- Transmissions -->
   <transmission name="left_wheel_front_tran">
     <type>transmission_interface/SimpleTransmission</type>
-    <joint name="left_wheel_front_hinge">
+    <joint name="left_wheel_front_joint">
       <hardwareInterface>hardware_interface/VelocityJointInterface</hardwareInterface>
     </joint>
     <actuator name="left_wheel_front_motor">
@@ -749,7 +749,7 @@
   </transmission>
   <transmission name="left_wheel_back_tran">
     <type>transmission_interface/SimpleTransmission</type>
-    <joint name="left_wheel_back_hinge">
+    <joint name="left_wheel_back_joint">
       <hardwareInterface>hardware_interface/VelocityJointInterface</hardwareInterface>
     </joint>
     <actuator name="left_wheel_back_motor">
@@ -759,7 +759,7 @@
   </transmission>
   <transmission name="right_wheel_front_tran">
     <type>transmission_interface/SimpleTransmission</type>
-    <joint name="right_wheel_front_hinge">
+    <joint name="right_wheel_front_joint">
       <hardwareInterface>hardware_interface/VelocityJointInterface</hardwareInterface>
     </joint>
     <actuator name="right_wheel_front_motor">
@@ -769,7 +769,7 @@
   </transmission>
   <transmission name="right_wheel_back_tran">
     <type>transmission_interface/SimpleTransmission</type>
-    <joint name="right_wheel_back_hinge">
+    <joint name="right_wheel_back_joint">
       <hardwareInterface>hardware_interface/VelocityJointInterface</hardwareInterface>
     </joint>
     <actuator name="right_wheel_back_motor">
@@ -779,7 +779,7 @@
   </transmission>
   <transmission name="arm_back_tran">
     <type>transmission_interface/SimpleTransmission</type>
-    <joint name="arm_back_hinge">
+    <joint name="arm_back_joint">
       <hardwareInterface>hardware_interface/VelocityJointInterface</hardwareInterface>
     </joint>
     <actuator name="arm_back_motor">
@@ -787,12 +787,12 @@
       <mechanicalReduction>1</mechanicalReduction>
     </actuator>
   </transmission>
-  <transmission name="drum_back_hinge_tran">
+  <transmission name="drum_back_joint_tran">
     <type>transmission_interface/SimpleTransmission</type>
-    <joint name="drum_back_hinge">
+    <joint name="drum_back_joint">
       <hardwareInterface>hardware_interface/VelocityJointInterface</hardwareInterface>
     </joint>
-    <actuator name="drum_back_hinge_motor">
+    <actuator name="drum_back_joint_motor">
       <hardwareInterface>hardware_interface/VelocityJointInterface</hardwareInterface>
       <mechanicalReduction>1</mechanicalReduction>
     </actuator>
@@ -934,7 +934,7 @@
     <child link="depth_camera_optical_frame"/>
   </joint>
   <link name="depth_camera_optical_frame"/>
-  <joint name="left_wheel_front_hinge" type="continuous">
+  <joint name="left_wheel_front_joint" type="continuous">
     <origin rpy="0 0 0" xyz="0.20 0.285 0"/>
     <child link="left_wheel_front"/>
     <parent link="base_link"/>
@@ -942,7 +942,7 @@
     <limit effort="100" velocity="100"/>
     <joint_properties damping="0.0" friction="0.0"/>
   </joint>
-  <joint name="right_wheel_front_hinge" type="continuous">
+  <joint name="right_wheel_front_joint" type="continuous">
     <origin rpy="0 0 0" xyz="0.20 -0.285 0"/>
     <child link="right_wheel_front"/>
     <parent link="base_link"/>
@@ -950,7 +950,7 @@
     <limit effort="100" velocity="100"/>
     <joint_properties damping="0.0" friction="0.0"/>
   </joint>
-  <joint name="left_wheel_back_hinge" type="continuous">
+  <joint name="left_wheel_back_joint" type="continuous">
     <origin rpy="0 0 0" xyz="-0.20 0.285 0"/>
     <child link="left_wheel_back"/>
     <parent link="base_link"/>
@@ -958,7 +958,7 @@
     <limit effort="100" velocity="100"/>
     <joint_properties damping="0.0" friction="0.0"/>
   </joint>
-  <joint name="right_wheel_back_hinge" type="continuous">
+  <joint name="right_wheel_back_joint" type="continuous">
     <origin rpy="0 0 0" xyz="-0.20 -0.285 0"/>
     <child link="right_wheel_back"/>
     <parent link="base_link"/>
@@ -966,7 +966,7 @@
     <limit effort="100" velocity="100"/>
     <joint_properties damping="0.0" friction="0.0"/>
   </joint>
-  <joint name="arm_back_hinge" type="continuous">
+  <joint name="arm_back_joint" type="continuous">
     <origin rpy="0 0 0" xyz="-0.20 0 0"/>
     <child link="arm_back"/>
     <parent link="base_link"/>
@@ -974,7 +974,7 @@
     <limit effort="100" velocity="100"/>
     <joint_properties damping="0.0" friction="0.0"/>
   </joint>
-  <joint name="drum_back_hinge" type="continuous">
+  <joint name="drum_back_joint" type="continuous">
     <origin rpy="3.1415 0 0" xyz="-0.388245 0 0"/>
     <child link="drum_back"/>
     <parent link="arm_back"/>

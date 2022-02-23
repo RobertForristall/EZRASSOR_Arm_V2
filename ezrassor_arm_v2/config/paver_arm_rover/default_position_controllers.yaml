@@ -49,6 +49,12 @@ ezrassor:
         joint1:
           trajectory: 0.05
           goal: 0.03
+      gains:
+        joint1: {p: 100.0, d: 0.0, i: 0.0}
+        joint2: {p: 100.0, d: 0.0, i: 0.0}
+        joint3: {p: 100.0, d: 0.0, i: 0.0}
+        joint4: {p: 100.0, d: 0.0, i: 0.0}
+        joint5: {p: 100.0, d: 0.0, i: 0.0}
   
   gripper_effort_controller:
     ros__parameters:

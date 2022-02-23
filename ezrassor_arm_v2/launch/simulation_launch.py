@@ -116,7 +116,7 @@ def generate_launch_description():
         "planning_scene_monitor_options": {
             "name": "planning_scene_monitor",
             "robot_description": "robot_description",
-            "joint_state_topic": "/joint_states",
+            "joint_state_topic": "ezrassor/joint_states",
             "attached_collision_object_topic": "/move_group/planning_scene_monitor",
             "publish_planning_scene_topic": "/move_group/publish_planning_scene",
             "monitored_planning_scene_topic": "/move_group/monitored_planning_scene",
@@ -142,6 +142,7 @@ def generate_launch_description():
         condition=LaunchConfigurationEquals('rover_model', 'arm')
     )
 
+    # Launch move group interface node from the ezrassor_arm_v2 package
     move_group_interface = Node(
         package='ezrassor_arm_v2',
         executable='move_group_interface',
@@ -149,6 +150,7 @@ def generate_launch_description():
         condition=LaunchConfigurationEquals('rover_model', 'arm')
     )
 
+    # Launch the static transform publisher
     static_tf = Node(
         package="tf2_ros",
         executable="static_transform_publisher",
@@ -273,12 +275,6 @@ def generate_launch_description():
                 condition = LaunchConfigurationEquals('rover_model', 'arm')
             )     
         ]
-
-    load_move_group_interface = ExecuteProcess(
-        cmd=['ros2', 'run', 'ezrassor_move_group_interface', 'move_group_interface'],
-        output='screen',
-        condition=LaunchConfigurationEquals('rover_model', 'arm')
-    )
 
     # Launch the joint_state_controller
     load_joint_state_controller = ExecuteProcess(
