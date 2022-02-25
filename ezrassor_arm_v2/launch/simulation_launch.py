@@ -116,7 +116,7 @@ def generate_launch_description():
         "planning_scene_monitor_options": {
             "name": "planning_scene_monitor",
             "robot_description": "robot_description",
-            "joint_state_topic": "ezrassor/joint_states",
+            "joint_state_topic": "/ezrassor/joint_states",
             "attached_collision_object_topic": "/move_group/planning_scene_monitor",
             "publish_planning_scene_topic": "/move_group/publish_planning_scene",
             "monitored_planning_scene_topic": "/move_group/monitored_planning_scene",
@@ -411,7 +411,7 @@ def generate_launch_description():
         ),
         DeclareLaunchArgument(
             'verbose',
-            default_value=['false', ''],
+            default_value=['false'],
             description='Enable the verbose mode of the gazebo'
         ),
         DeclareLaunchArgument(

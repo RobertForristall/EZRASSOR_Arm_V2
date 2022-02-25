@@ -68,6 +68,46 @@
     <fdir1 value="1 0 0"/>
   </gazebo>
 
+  <gazebo reference="link1">
+    <selfCollide>0</selfCollide>
+  </gazebo>
+
+  <gazebo reference="link2">
+    <selfCollide>0</selfCollide>
+  </gazebo>
+
+  <gazebo reference="link3">
+    <selfCollide>0</selfCollide>
+  </gazebo>
+
+  <gazebo reference="link4">
+    <selfCollide>0</selfCollide>
+  </gazebo>
+
+  <gazebo reference="link5">
+    <selfCollide>0</selfCollide>
+  </gazebo>
+
+  <gazebo reference="link6">
+    <selfCollide>0</selfCollide>
+  </gazebo>
+
+  <gazebo reference="arm_camera">
+    <selfCollide>0</selfCollide>
+  </gazebo>
+
+  <gazebo reference="grabber1">
+    <selfCollide>0</selfCollide>
+  </gazebo>
+
+  <gazebo reference="grabber2">
+    <selfCollide>0</selfCollide>
+  </gazebo>
+
+  <gazebo reference="platform">
+    <selfCollide>1</selfCollide>
+  </gazebo>
+
   <!-- Cameras -->
   <gazebo reference="depth_camera_front">
     <sensor name="depth_camera_front_camera" type="depth">

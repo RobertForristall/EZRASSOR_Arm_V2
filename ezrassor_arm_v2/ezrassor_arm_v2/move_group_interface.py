@@ -25,6 +25,9 @@ class MoveGroupInterface(Node):
             callback_group=self.callback_group,
         )
 
+        self.moveit2.max_velocity = 0.2
+        self.moveit2.max_acceleration = 0.2
+
         self.sub_topic = 'move_group_interface/command'
         self.gripper_pub_topic = 'gripper_instructions'
 
@@ -52,11 +55,22 @@ class MoveGroupInterface(Node):
 
         self.temp = ArmCommand()
         self.temp.command = "home"
-        self.temp.pose_data = [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
+        self.temp.pose_data = [1.0, 0.3, 0.3, 0.0, 0.0, 0.0, 1.0]
         self.temp.joint_data = [0.0, 0.0, 0.0, 0.0, 0.0]
     
     def handle_command(self, data):
         if (data.command == "home"):
+            self.move_to_home()
+
+        elif(data.command == 'place'):
+            self.move_to_pose(data.pose_data)
+
+        elif(data.command == 'full_place_1st'):
+            self.move_to_prep()
+            self.move_to_first_pickup()
+            self.move_to_post_pickup()
+            self.move_to_home()
+            self.move_to_pose(data.pose_data)
             self.move_to_home()
         else:
             self.get_logger().info(
@@ -73,8 +87,8 @@ class MoveGroupInterface(Node):
 
     # data.data = [command, pos.x, pos.y, pos.z, quat.x, quat.y, quat.z, quat.w]
     def move_to_pose(self, data):
-        position = data.data[1:4]
-        quat = data.data[4:]
+        position = data[0:3]
+        quat = data[3:]
 
         self.get_logger().info(
         f"Moving to {{position: {list(position)}, quat_xyzw: {list(quat)}}}"

@@ -648,7 +648,6 @@
       <mechanicalReduction>1</mechanicalReduction>
     </actuator>
   </transmission>
-  -->
 
   <!-- Front Camera Added -->
   <link name="depth_camera_front">
@@ -804,7 +803,7 @@
     <child link="link2"/>
     <parent link="link1"/>
     <axis xyz="0 0 1" rpy="0 0 0"/>
-    <joint_properties damping="0.0" friction="0.0"/>
+    <joint_properties damping="21.0" friction="10.0"/>
   </joint>
 
   <joint type="continuous" name="joint2">
@@ -812,7 +811,7 @@
     <child link="link3"/>
     <parent link="link2"/>
     <axis xyz="0 1 0" rpy="0 0 0"/>
-    <joint_properties damping="0.0" friction="0.0"/>
+    <joint_properties damping="21.0" friction="10.0"/>
   </joint>
 
   <joint type="continuous" name="joint3">
@@ -820,7 +819,7 @@
     <child link="link4"/>
     <parent link="link3"/>
     <axis xyz="0 1 0" rpy="0 0 0"/>
-    <joint_properties damping="0.0" friction="0.0"/>
+    <joint_properties damping="21.0" friction="10.0"/>
   </joint>
 
   <joint type="continuous" name="joint4">
@@ -828,7 +827,7 @@
     <child link="link5"/>
     <parent link="link4"/>
     <axis xyz="0 1 0" rpy="0 0 0"/>
-    <joint_properties damping="0.0" friction="0.0"/>
+    <joint_properties damping="21.0" friction="10.0"/>
   </joint>
 
   <joint type="continuous" name="joint5">
@@ -836,7 +835,7 @@
     <child link="link6"/>
     <parent link="link5"/>
     <axis xyz="0 0 1" rpy="0 0 0"/>
-    <joint_properties damping="0.0" friction="0.0"/>
+    <joint_properties damping="21.0" friction="10.0"/>
   </joint>
 
   
@@ -885,10 +884,12 @@
                     <param name="max">15</param>
                 </command_interface>
                 <state_interface name="position">
-                    <param name="initial_value">0.0</param>
+                    <param name="initial_value">1.0</param>
                 </state_interface>
                 <state_interface name="velocity"/>
-                <state_interface name="effort"/>
+                <state_interface name="effort">
+                    <param name='inital_value'>5.0</param>
+                </state_interface>
             </joint>
             <joint name="joint2">
                 <command_interface name="position">
@@ -896,10 +897,12 @@
                     <param name="max">15</param>
                 </command_interface>
                 <state_interface name="position">
-                    <param name="initial_value">0.0</param>
+                    <param name="initial_value">1.0</param>
                 </state_interface>
                 <state_interface name="velocity"/>
-                <state_interface name="effort"/>
+                <state_interface name="effort">
+                    <param name='inital_value'>5.0</param>
+                </state_interface>
             </joint>
             <joint name="joint3">
                 <command_interface name="position">
@@ -907,10 +910,12 @@
                     <param name="max">15</param>
                 </command_interface>
                 <state_interface name="position">
-                    <param name="initial_value">0.0</param>
+                    <param name="initial_value">1.0</param>
                 </state_interface>
                 <state_interface name="velocity"/>
-                <state_interface name="effort"/>
+                <state_interface name="effort">
+                    <param name='inital_value'>5.0</param>
+                </state_interface>
             </joint>
             <joint name="joint4">
                 <command_interface name="position">
@@ -918,10 +923,12 @@
                     <param name="max">15</param>
                 </command_interface>
                 <state_interface name="position">
-                    <param name="initial_value">0.0</param>
+                    <param name="initial_value">1.0</param>
                 </state_interface>
                 <state_interface name="velocity"/>
-                <state_interface name="effort"/>
+                <state_interface name="effort">
+                    <param name='inital_value'>5.0</param>
+                </state_interface>
             </joint>
             <joint name="joint5">
                 <command_interface name="position">
@@ -929,10 +936,12 @@
                     <param name="max">15</param>
                 </command_interface>
                 <state_interface name="position">
-                    <param name="initial_value">0.0</param>
+                    <param name="initial_value">1.0</param>
                 </state_interface>
                 <state_interface name="velocity"/>
-                <state_interface name="effort"/>
+                <state_interface name="effort">
+                    <param name='inital_value'>5.0</param>
+                </state_interface>
             </joint>
             <joint name="grabber_joint1">
                 <command_interface name="effort">
