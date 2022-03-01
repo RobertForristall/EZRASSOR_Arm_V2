@@ -194,7 +194,7 @@ def generate_launch_description():
             executable="robot_state_publisher",
             namespace='ezrassor',
             output="screen",
-            parameters=[{"robot_description": arm_content}],
+            parameters=[{'use_sim_time': True, "robot_description": arm_content}],
             condition = LaunchConfigurationEquals('rover_model', 'arm')
         )
 
