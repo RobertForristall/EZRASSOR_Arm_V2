@@ -240,6 +240,20 @@ def generate_launch_description():
         condition = LaunchConfigurationEquals('control_methods', 'autonomous')
     )
 
+    obstacle_detection_args = [
+        45.0,
+        4.0,
+        3.0
+    ]
+
+    obstacle_detection = Node(
+        package='ezrassor_arm_v2',
+        executable='obstacle_detection',
+        arguments=obstacle_detection_args,
+        output='screen',
+        condition = LaunchConfigurationEquals('control_methods', 'autonomous')
+    )
+
     # Launch the gamepad_controls node of the ezrassor_arm_v2 package
     gamepad_controls = Node(
         package='ezrassor_arm_v2',

@@ -72,4 +72,6 @@ def main(args=None):
     rclpy.init(args=args)
     standard_controller_args = sys.argv[1:10]
     controller = StandardRoverController(topics=topics, args=standard_controller_args)
+
+    rclpy.spin(controller)
     

@@ -19,6 +19,8 @@ actions = {
     'paver_arm': ArmCommand()
 }
 
+epsilon = 0.05
+
 class WorldState:
 
     def __init__(self, node):
@@ -95,10 +97,10 @@ class WorldState:
 
     def get_arm_force(self):
         front_arm_force = {
-            self.arm_angles['front'] + 0.2 + uniform(-0.2, 0.2)
+            self.state_flags['force_front_arm'] + 0.2 + uniform(-0.2, 0.2)
         }
         back_arm_force = {
-            self.arm_angles['back'] + 0.2 + uniform(-0.2, 0.2)
+            self.state_flags['force_back_arm'] + 0.2 + uniform(-0.2, 0.2)
         }
         return front_arm_force, back_arm_force
 
@@ -540,6 +542,57 @@ def get_turn_angle(world_state, ros_util):
         if best_angle is not None:
             return best_angle
                 
+
+def is_force_target(world_state, target_force):
+
+    front_force = (
+        target_force - epsilon
+        < world_state.state_flags['force_front_arm']
+        < target_force + epsilon
+    )
+
+    back_force = (
+        target_force - epsilon
+        < world_state.state_flags['force_back_arm']
+        < target_force + epsilon
+    )
+
+    return front_force and back_force
+
+def set_target_force(world_state, ros_util, target_force, t):
+
+    while not is_force_target(world_state, target_force):
+
+        msg = 0b0
+        if (
+            not target_force - epsilon
+            < world_state.state_flags['force_front_arm']
+            < target_force + epsilon
+        ):
+            if target_force > world_state.state_flags['force_front_arm']:
+                msg += ros_util.commands['front_arm_up']
+            elif target_force < world_state.state_flags['force_front_arm']:
+                msg += ros_util.commands['front_arm_down']
+
+        if (
+            not target_force - epsilon
+            < world_state.state_flags['force_back_arm']
+            < target_force + epsilon
+        ):
+            if target_force > world_state.state_flags['force_back_arm']:
+                msg += ros_util.commands['back_arm_up']
+            elif target_force < world_state.state_flags['force_back_arm']:
+                msg += ros_util.commands['back_arm_down']
+        
+        msg += ros_util.commands['front_dig']
+        msg += ros_util.commands['back_dig']
+        msg += ros_util.commands['forward']
+        ros_util.command_pub.publish(msg)
+        ros_util.rate.sleep()
+        t += 1
+    
+    ros_util.command_pub.publish(ros_util.commands['null'])
+    return t
 
 
 
