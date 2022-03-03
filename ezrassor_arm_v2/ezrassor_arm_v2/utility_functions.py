@@ -430,11 +430,116 @@ def dodge_right(world_state, ros_util):
 
 def self_right_from_side(world_state, ros_util):
 
+    world_state.logger.info(
+        'Staring auto self-right...'
+    )
+
+    while world_state.flags['on_side'] is not False:
+        actions.update({'front_arm': 1})
+        ros_util.publish_actions(actions)
+        actions.update({'front_arm': 0, 'back_arm': 1})
+        ros_util.publish_actions(actions)
+
+    actions.update({'front_arm': 0, 'back_arm': 1})
+    ros_util.publish_actions(actions)
+
+
 def get_turn_angle(world_state, ros_util):
 
-def send_feedback(world_state, waypoint_server):
+    best_angle = nf.get_best_angle(
+        world_state, ros_util.obstacle_buffer, scan, ros_util.obstacle_threshold
+    )
 
-def build_result(world_state, preempted):
+    while True:
+
+        if best_angle is None:
+            
+            switch_direction = -1
+            wedge_dist = 0
+            wedge_size = (scan.angle_max - scan.angle_min) / 2.0
+            world_state.logger.info(
+                'There is nowhere to go in the current wedge.'
+                + 'Turning to the adjacent wedge.'
+            )
+
+            while best_angle is None:
+                if self_check(world_state, ros_util) != 1:
+                    world_state.logger.info(
+                        'Status Check Failed!'
+                    )
+                    return
+                
+                set_front_arm_angle(world_state, ros_util, 1.3)
+                set_back_arm_angle(world_state, ros_util, 1.3)
+
+                switch_direction *= -1
+                wedge_dist += 1
+
+                if switch_direction < 0:
+                    direction = 'left'
+                else:
+                    direction = 'right'
+                
+                turn (
+                    nf.rel_to_abs(world_state.heading, wedge_size * wedge_dist),
+                    direction,
+                    world_state,
+                    ros_util
+                )
+
+                ros_util.rate.sleep()
+
+                world_state.logger.info(
+                    'Currently at wedge W{}'.format(wedge_dist-1)
+                )
+                best_angle = nf.get_best_angle(
+                    world_state,
+                    ros_util.obstacle_buffer,
+                    scan,
+                    ros_util.obstacle_threshold,
+                )
+        wedge_size = (scan.angle_max - scan.angle_min) / 20.0
+        buffer_angle = math.atan(
+            ros_util.obstacle_buffer / ros_util.obstacle_threshold
+        )
+        min_angle = scan.angle_min + buffer_angle
+        max_angle = scan.angle_max - buffer_angle
+        best_index = int((best_angle - scan.angle_min) / scan.angle_increment)
+        min_index = int((min_angle - scan.angle_min) / scan.angle_increment)
+        max_index = int((max_angle - scan.angle_min) / scan.angle_increment)
+
+        while best_index <= min_index or best_index >= max_index:
+            if best_angle < 0:
+                direction = 'right'
+            else:
+                direction = 'left'
+            
+            turn(
+                nf.rel_to_abs(world_state.heading, wedge_size),
+                direction,
+                world_state,
+                ros_util,
+            )
+
+            ros_util.rate.sleep()
+
+            best_angle = nf.get_best_angle(
+                world_state,
+                ros_util.obstacle_buffer,
+                scan,
+                ros_util.obstacle_threshold,
+            )
+
+            if best_angle is None:
+                break
+            
+            best_index = int(
+                (best_angle - scan.angle_min) / scan.angle_increment
+            )
+        
+        if best_angle is not None:
+            return best_angle
+                
 
 
 
