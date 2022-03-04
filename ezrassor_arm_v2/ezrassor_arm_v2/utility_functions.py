@@ -3,9 +3,9 @@ from operator import truediv
 import rclpy
 import math
 from geometry_msgs.msg import (Twist, Pose, Point)
-import nav_functions as nf
+import ezrassor_arm_v2.nav_functions as nf
 from random import uniform
-from std_msgs.msg import (Float32, Bool, Float64MultiArray)
+from std_msgs.msg import (Float32, Bool, Float64MultiArray, Float64)
 from ezrassor_arm_interfaces.msg import ArmCommand
 
 scan = None
@@ -52,9 +52,8 @@ class WorldState:
         self.logger = node.get_logger()
     
     def jointCallBack(self, data):
-
         self.arm_angles['front'] = data.position[1]
-        self.arm_angles['back'] = data.position[0]
+        self.arm_angles['back'] = data.position[5]
 
     def odometryCallBack(self, data):
         self.position['x'] = data.pose.pose.position.x + self.start_position['x']
@@ -134,11 +133,11 @@ class ROSUtility:
         )
 
         self.back_arm_pub = node.create_publisher(
-            Float32, back_arm_topic, queue_size
+            Float64, back_arm_topic, queue_size
         )
 
         self.back_drum_pub = node.create_publisher(
-            Float32, back_drum_topic, queue_size
+            Float64, back_drum_topic, queue_size
         )
 
         if (rover_model == 'arm'):
@@ -147,10 +146,10 @@ class ROSUtility:
             )
         else:
             self.front_arm_pub = node.create_publisher(
-                Float32, front_arm_topic, queue_size
+                Float64, front_arm_topic, queue_size
             )
             self.front_drum_pub = node.create_publisher(
-                Float32, front_drum_topic, queue_size
+                Float64, front_drum_topic, queue_size
             )  
 
         self.control_pub = node.create_publisher(
@@ -192,57 +191,69 @@ class ROSUtility:
             pass
 
         self.movement_pub.publish(twist_message)
-        self.back_arm_pub.publish(actions['back_arm'])
-        self.back_drum_pub.publish(actions['back_drum'])
+
+        back_arm_msg = Float64()
+        back_arm_msg.data = float(actions['back_arm'])
+        self.back_arm_pub.publish(back_arm_msg)
+
+        back_drum_msg = Float64()
+        back_drum_msg.data = float(actions['back_drum'])
+        self.back_drum_pub.publish(back_drum_msg)
 
         if self.rover_model == 'arm':
             self.paver_arm_pub.publish(actions['paver_arm'])
         else:
-            self.front_arm_pub.publish(actions['front_arm'])
-            self.front_drum_pub.publish(actions['front_drum'])
+            front_arm_msg = Float64()
+            front_arm_msg.data = float(actions['front_arm'])
+            self.front_arm_pub.publish(front_arm_msg)
+
+            front_drum_msg = Float64()
+            front_drum_msg.data = float(actions['front_drum'])
+            self.front_drum_pub.publish(front_drum_msg)
         
     def autoCommandCallBack(self, data):
         self.auto_function_command = data.data
         
 def on_scan_update(new_scan):
-    global scan
     scan = new_scan
 
 def set_front_arm_angle(world_state, ros_util, target_angle):
 
+    msg = Bool()
+
     if target_angle > world_state.arm_angles['front']:
         while target_angle > world_state.arm_angles['front']:
-            global actions
             actions.update({'front_arm': 1.0})
             ros_util.publish_actions(actions)
-        ros_util.arms_up_pub.publish(True)
+        msg.data = True
+        ros_util.arms_up_pub.publish(msg)
     else:
         while target_angle < world_state.arm_angles['front']:
-            global actions
             actions.update({'front_arm': -1.0})
             ros_util.publish_actions(actions)
-        ros_util.amrs_up_pub.publish(False)
+        msg.data = False
+        ros_util.arms_up_pub.publish(msg)
     
-    global actions
     actions.update({'front_arm': 0.0})
     ros_util.publish_actions(actions)
 
 def set_back_arm_angle(world_state, ros_util, target_angle):
 
+    msg = Bool()
+
     if target_angle > world_state.arm_angles['back']:
         while target_angle > world_state.arm_angles['back']:
-            global actions
             actions.update({'back_arm': 1.0})
             ros_util.publish_actions(actions)
-        ros_util.arms_up_pub.publish(True)
+        msg.data = True
+        ros_util.arms_up_pub.publish(msg)
     else:
         while target_angle < world_state.arm_angles['back']:
-            global actions
             actions.update({'back_arm': -1.0})
             ros_util.publish_actions(actions)
-        ros_util.amrs_up_pub.publish(False)
+        msg.data = True
+        ros_util.arms_up_pub.publish(msg)
     
-    global actions
     actions.update({'back_arm': 0.0})
     ros_util.publish_actions(actions)
 
@@ -255,9 +266,10 @@ def self_check(world_state, ros_util):
         world_state.logger.info(
             'Canceling auto function commands...'
         )
-        global actions
         ros_util.publish_actions(actions)
-        ros_util.control_pub.publish(False)
+        msg = Bool()
+        msg.data = False
+        ros_util.control_pub.publish(msg)
         return -1
     
     if world_state.battery < 10:
@@ -358,8 +370,6 @@ def move(dist, world_state, ros_util, direction="forward"):
     )
 
 def reverse_turn(world_state, ros_util):
-
-    global actions
 
     while world_state.warning_flag == 3:
         actions.update({'movement': 'reverse'})

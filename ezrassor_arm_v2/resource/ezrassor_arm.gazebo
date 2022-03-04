@@ -205,7 +205,7 @@
       <ros>
         <!-- Will publish to /imu/data -->
         <namespace>/imu</namespace>
-        <argument>--ros-args --remap ~/out:=data</argument>
+        <argument>--ros-args --remap ~/out:=imu_data</argument>
       </ros>
       <frame_name>imu_link</frame_name>
     </plugin>

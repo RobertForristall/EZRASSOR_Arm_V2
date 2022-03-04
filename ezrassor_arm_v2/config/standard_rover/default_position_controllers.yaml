@@ -1,64 +1,121 @@
-joint_state_controller:
-  type: joint_state_controller/JointStateController
-  publish_rate: 50
+ezrassor:
+  # Controller manager configuration   
+  controller_manager:
+    ros__parameters:
+      update_rate: 100
+      
+      joint_state_broadcaster:
+        type: joint_state_broadcaster/JointStateBroadcaster
 
-arm_front_velocity_controller:
-  type: velocity_controllers/JointVelocityController
-  joint: arm_front_hinge
-  pid: {p: 100.0, i: 0.01, d: 10.0}
-arm_back_velocity_controller:
-  type: velocity_controllers/JointVelocityController
-  joint: arm_back_hinge
-  pid: {p: 100.0, i: 0.01, d: 10.0}
-drum_front_velocity_controller:
-  type: velocity_controllers/JointVelocityController
-  joint: drum_front_hinge
-  pid: {p: 100.0, i: 0.01, d: 10.0}
-drum_back_velocity_controller:
-  type: velocity_controllers/JointVelocityController
-  joint: drum_back_hinge
-  pid: {p: 100.0, i: 0.01, d: 10.0}
+      diff_drive_controller:
+        type: diff_drive_controller/DiffDriveController
 
-# Allow for diff drive kinematics, one Twist command for all wheels and get odom for free
-diff_drive_controller:
-  type: diff_drive_controller/DiffDriveController
+      arm_front_velocity_controller:
+        type: velocity_controllers/JointGroupVelocityController
+      
+      arm_back_velocity_controller:
+        type: velocity_controllers/JointGroupVelocityController
 
-  # Joints for each wheel
-  left_wheel: [ 'left_wheel_front_hinge', 'left_wheel_back_hinge' ]
-  right_wheel: [ 'right_wheel_front_hinge', 'right_wheel_back_hinge' ]
+      drum_front_velocity_controller:
+        type: velocity_controllers/JointGroupVelocityController
 
-  # Separation between a left and right wheel in meters
-  wheel_separation: 0.4
+      drum_back_velocity_controller:
+        type: velocity_controllers/JointGroupVelocityController
 
-  wheel_radius: 0.18
+  diff_drive_controller:
+    ros__parameters:
+      left_wheel_names: ["left_wheel_front_joint", "left_wheel_back_joint"]
+      right_wheel_names: ["right_wheel_front_joint", "right_wheel_back_joint"]
+    
+      wheel_seperation: 0.10
+      wheel_radius: 0.18
+      wheel_separation_multiplier: 1.0
 
-  # Setting the timeout to INT_MAX (~68 years) until we can migrate all of our
-  # controllers to publish commands continuously instead of discretely.
-  cmd_vel_timeout: 2147483647
+      left_wheel_radius_multiplier: 1.0
+      right_wheel_radius_multiplier: 1.0
 
-  # Publish the odometry to separate topic or not; false to work w/ Kalman Filter
-  enable_odom_tf: false
+      publish_rate: 50.0
+      odom_frame_id: odom
+      base_frame_id: base_link
 
-  # Default covariance values from example on diff drive controller wiki
-  pose_covariance_diagonal: [0.001, 0.001, 1000000.0, 1000000.0, 1000000.0, 1000.0]
-  twist_covariance_diagonal: [0.001, 0.001, 1000000.0, 1000000.0, 1000000.0, 1000.0]
+      pose_covariance_diagonal : [0.001, 0.001, 0.001, 0.001, 0.001, 0.01]
+      twist_covariance_diagonal: [0.001, 0.001, 0.001, 0.001, 0.001, 0.01]
 
-  # Frame of rover
-  base_frame_id: base_link
+      open_loop: true
+      enable_odom_tf: true
 
-  # The ratio of max acc and max vel is same as skid steer example in diff drive controlller wiki
-  linear:
-    x:
-      has_velocity_limits    : true
+      cmd_vel_timeout: 0.5
+      use_stamped_vel: false
 
-      # Actual speed of rover is 1 meter per 3 secs, so this is sped up
-      max_velocity           : 1.0  # m/s
+      preserve_turning_radius: true
 
-      # Match backwards speed cap
-      min_velocity           : -1.0 # m/s
+      publish_cmd: true
 
-      has_acceleration_limits: true
-      max_acceleration       : 1.0  # m/s^2
-      min_acceleration       : -1.0 # m/s^2
+      publish_wheel_data: true
 
-  # Could also include for constraints for angular but linear caps ensure rover doesn't rotate too fast
+      linear.x.has_velocity_limits: true
+      linear.x.has_acceleration_limits: true
+      linear.x.has_jerk_limits: false
+      linear.x.max_velocity: 10.0
+      linear.x.min_velocity: -10.0
+      linear.x.max_acceleration: 2.0
+      linear.x.max_jerk: 0.0
+      linear.x.min_jerk: 0.0
+
+      angular.z.has_velocity_limits: true
+      angular.z.has_acceleration_limits: true
+      angular.z.has_jerk_limits: false
+      angular.z.max_velocity: 1.0
+      angular.z.min_velocity: -1.0
+      angular.z.max_acceleration: 1.0
+      angular.z.min_acceleration: -1.0
+      angular.z.max_jerk: 0.0
+      angular.z.min_jerk: 0.0
+
+  arm_front_velocity_controller:
+    ros__parameters:
+      joints:
+        - arm_front_joint
+      pid: {p: 100.0, i: 0.01, d: 10.0}
+      command_interfaces:
+        - velocity
+
+      state_interfaces:
+        - position
+        - velocity
+  
+  arm_back_velocity_controller:
+    ros__parameters:
+      joints:
+        - arm_back_joint
+      pid: {p: 100.0, i: 0.01, d: 10.0}
+      command_interfaces:
+        - velocity
+
+      state_interfaces:
+        - position
+        - velocity
+
+  drum_front_velocity_controller:
+    ros__parameters:
+      joints:
+       - drum_front_joint
+      pid: {p: 100.0, i: 0.01, d: 10.0}
+      command_interfaces:
+        - velocity
+
+      state_interfaces:
+        - position
+        - velocity  
+  
+  drum_back_velocity_controller:
+    ros__parameters:
+      joints:
+       - drum_back_joint
+      pid: {p: 100.0, i: 0.01, d: 10.0}
+      command_interfaces:
+        - velocity
+
+      state_interfaces:
+        - position
+        - velocity  

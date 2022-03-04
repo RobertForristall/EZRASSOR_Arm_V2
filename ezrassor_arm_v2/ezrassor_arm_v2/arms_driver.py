@@ -16,9 +16,9 @@ import sys
 
 NODE = "arms_driver"
 FRONT_ARMS_EXTERNAL_TOPIC = "front_arm_instructions"
-FRONT_ARMS_INTERNAL_TOPIC = "arm_front_velocity_controller/command"
+FRONT_ARMS_INTERNAL_TOPIC = "ezrassor/arm_front_velocity_controller/commands"
 BACK_ARMS_EXTERNAL_TOPIC = "back_arm_instructions"
-BACK_ARMS_INTERNAL_TOPIC = "arm_back_velocity_controller/command"
+BACK_ARMS_INTERNAL_TOPIC = "ezrassor/arm_back_velocity_controller/commands"
 
 QUEUE_SIZE = 10
 MAX_ARM_SPEED = 0.75
@@ -31,14 +31,19 @@ def handle_front_arm_movements(data):
     """Move the front arm of the robot per
     the commands encoded in the instruction.
     """
-    publishers[FRONT_ARMS_INTERNAL_TOPIC].publish(data.data * MAX_ARM_SPEED)
+    msg = std_msgs.msg.Float64()
+    msg.data = (data.data * MAX_ARM_SPEED)
+    print(msg)
+    publishers[FRONT_ARMS_INTERNAL_TOPIC].publish(msg)
 
 
 def handle_back_arm_movements(data):
     """Move the front arm of the robot per
     the commands encoded in the instruction.
     """
-    publishers[BACK_ARMS_INTERNAL_TOPIC].publish(data.data * MAX_ARM_SPEED)
+    msg = std_msgs.msg.Float64()
+    msg.data = (data.data * MAX_ARM_SPEED)
+    publishers[BACK_ARMS_INTERNAL_TOPIC].publish(msg)
 
 
 def main(passed_args=None):

@@ -241,9 +241,9 @@ def generate_launch_description():
     )
 
     obstacle_detection_args = [
-        45.0,
-        4.0,
-        3.0
+        LaunchConfiguration('max_angle'),
+        LaunchConfiguration('max_obstacle_dist'),
+        LaunchConfiguration('min_hole_diameter')
     ]
 
     obstacle_detection = Node(
@@ -400,12 +400,12 @@ def generate_launch_description():
         ),
         DeclareLaunchArgument(
             'target_x_coords',
-            default_value=['default', ''],
+            default_value=['5', ''],
             description='The x coordinate of the target location'
         ),
         DeclareLaunchArgument(
             'target_y_coords',
-            default_value=['default', ''],
+            default_value=['5', ''],
             description='the y coordinate of the target location'
         ),
         DeclareLaunchArgument(
@@ -458,7 +458,21 @@ def generate_launch_description():
             default_value=['false', ''],
             description='Enable swarm controls package for the rover'
         ),
-
+        DeclareLaunchArgument(
+            'max_angle',
+            default_value=['45.0', ''],
+            description=''
+        ),
+        DeclareLaunchArgument(
+            'max_obstacle_dist',
+            default_value=['4.0', ''],
+            description=''
+        ),
+        DeclareLaunchArgument(
+            'min_hole_diameter',
+            default_value=['3.0', ''],
+            description=''
+        ),
         # Spawn defined nodes above to process in the neccesary order
         gazebo,
         spawn_entity,
@@ -494,6 +508,12 @@ def generate_launch_description():
                 ],
             )
         ),
+        RegisterEventHandler(
+            event_handler=OnProcessExit(
+                target_action=load_diff_drive_controller,
+                on_exit=[autonomous_controls, obstacle_detection]
+            )
+        ), 
         RegisterEventHandler(
             event_handler=OnProcessExit(
                 target_action=load_paver_arm_trajectory_controller,

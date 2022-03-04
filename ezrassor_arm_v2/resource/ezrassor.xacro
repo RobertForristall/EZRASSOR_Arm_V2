@@ -559,8 +559,11 @@
   <!-- Include the gazebo_ros2_control plugin with standard rover model controllers-->
   <gazebo>
     <plugin filename="libgazebo_ros2_control.so" name="gazebo_ros2_control">
-      <parameters>$(find ezrassor_arm_v2)/config/paver_arm_rover/default_position_controllers.yaml</parameters>
+      <parameters>$(find ezrassor_arm_v2)/config/standard_rover/default_position_controllers.yaml</parameters>
     </plugin>
   </gazebo>
+
+  
+  <plugin filename="libgazebo_ros_state.so" name="gazebo_ros_state"/>
 
 </robot>

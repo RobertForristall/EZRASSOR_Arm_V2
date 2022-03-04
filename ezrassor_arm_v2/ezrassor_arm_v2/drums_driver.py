@@ -16,9 +16,9 @@ import sys
 
 NODE = "drums_driver"
 FRONT_DRUMS_EXTERNAL_TOPIC = "front_drum_instructions"
-FRONT_DRUMS_INTERNAL_TOPIC = "drum_front_velocity_controller/command"
+FRONT_DRUMS_INTERNAL_TOPIC = "ezrassor/drum_front_velocity_controller/commands"
 BACK_DRUMS_EXTERNAL_TOPIC = "back_drum_instructions"
-BACK_DRUMS_INTERNAL_TOPIC = "drum_back_velocity_controller/command"
+BACK_DRUMS_INTERNAL_TOPIC = "ezrassor/drum_back_velocity_controller/commands"
 
 QUEUE_SIZE = 10
 MAX_DRUM_SPEED = 5
@@ -77,13 +77,17 @@ class DrumsSubscriber(Node):
         """Move the front drum of the robot per
         the commands encoded in the instruction
         """
-        self.front_drums_publisher.publish(data.data * MAX_DRUM_SPEED)
+        msg = std_msgs.msg.Float64()
+        msg.data = (data.data * MAX_DRUM_SPEED)
+        self.front_drums_publisher.publish(msg)
 
     def handle_back_drum_movements(self, data: std_msgs.msg.Float64):
         """Move the back drum of the robot per
         the commands encoded in the instruction
         """
-        self.back_drums_publisher.publish(data.data * MAX_DRUM_SPEED)
+        msg = std_msgs.msg.Float64()
+        msg.data = (data.data * MAX_DRUM_SPEED)
+        self.back_drums_publisher.publish(msg)
 
 
 def main(passed_args=None):

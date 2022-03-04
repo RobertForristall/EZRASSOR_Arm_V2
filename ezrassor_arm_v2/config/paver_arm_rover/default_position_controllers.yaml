@@ -118,11 +118,23 @@ ezrassor:
       joints:
         - arm_back_joint
       pid: {p: 100.0, i: 0.01, d: 10.0}
+      command_interfaces:
+        - velocity
+
+      state_interfaces:
+        - position
+        - velocity
 
   drum_back_velocity_controller:
     ros__parameters:
       joints:
        - drum_back_joint
       pid: {p: 100.0, i: 0.01, d: 10.0}  
+      command_interfaces:
+        - velocity
+
+      state_interfaces:
+        - position
+        - velocity
 
   

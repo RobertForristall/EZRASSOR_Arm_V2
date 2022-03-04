@@ -2,25 +2,26 @@ import queue
 import sys
 import rclpy
 from rclpy.node import Node
-from std_msgs.msgs import Float64
+from std_msgs.msg import (Float64, Bool)
 from geometry_msgs.msg import (Twist, Point)
 from nav_msgs.msg import Odometry
 from gazebo_msgs.msg import LinkStates
 from sensor_msgs.msg import (JointState, Imu, LaserScan)
-import actionlib
 
-import auto_functions as af
-import utility_functions as uf
+import ezrassor_arm_v2.auto_functions as af
+import ezrassor_arm_v2.utility_functions as uf
 
 # Topics
 topics = [
-    'wheels_instructions',
+    'wheel_instructions',
     'front_arm_instructions',
     'back_arm_instructions',
     'front_drum_instructions',
     'back_drum_instructions',
     'move_group_interface/command'
 ]
+
+base_namespace = 'ezrassor/'
 
 class StandardRoverController(Node):
     def __init__(self, topics, args):
@@ -29,11 +30,11 @@ class StandardRoverController(Node):
 
         self.rover_model = args[0]
         self.target = Point()
-        self.target.x = args[1]
-        self.target.y = args[2]
+        self.target.x = float(args[1])
+        self.target.y = float(args[2])
         self.spawn = Point()
-        self.spawn.x = args[3]
-        self.spawn.y = args[4]
+        self.spawn.x = float(args[3])
+        self.spawn.y = float(args[4])
         self.odom_flag = args[5]
         self.park_flag = args[6]
         self.swarm_flag = args[7]
@@ -74,28 +75,29 @@ class StandardRoverController(Node):
             self.world_state.inital_spawn(self.spawn.x, self.spawn.y)
 
             self.odom_sub = self.create_subscription(
-                Odometry, 'odometry/filtered', self.world_state.odometryCallBack
+                Odometry, 'odometry/filtered', self.world_state.odometryCallBack, 10
             )
         
         else:
+            # TBC Add link_states plugin
             self.sim_state_sub = self.create_subscription(
-                LinkStates, '/gazebo/link_states', self.world_state.simStateCallBack
+                LinkStates, '/gazebo/link_states', self.world_state.simStateCallBack, 10
             )
         
         self.imu_sub = self.create_subscription(
-            Imu, 'imu', self.world_state.imuCallBack
+            Imu, base_namespace + 'imu_data', self.world_state.imuCallBack, 10
         )
 
         self.joint_state_sub = self.create_subscription(
-            JointState, 'joint_states', self.world_state.jointCallBack
+            JointState, base_namespace + 'joint_states', self.world_state.jointCallBack, 10
         )
 
         self.auto_command_sub = self.create_subscription(
-            Float64, 'auto_command', self.ros_util.auto_command_callback, 1
+            Float64, 'auto_command', self.autonomous_control_loop, 1
         )
 
         self.obstacle_sub = self.create_subscription(
-            LaserScan, 'obstacle_detection/combined', uf.on_scan_update, queue_size = 1
+            LaserScan, 'obstacle_detection/combined', uf.on_scan_update, 1
         )
 
         if self.swarm_flag:
@@ -141,46 +143,59 @@ class StandardRoverController(Node):
                 
                 # TBC
     
-    def autonomous_control_loop(self, world_state, ros_util):
+    def autonomous_control_loop(self, msg):
+
+        self.get_logger().info(
+            'Reading auto function command'
+        )
+
+        self.ros_util.auto_function_command = msg.data
 
         while True:
             while(
-                ros_util.auto_function_command == 0
-                or ros_util.auto_function_command == 32
+                self.ros_util.auto_function_command == 0
+                or self.ros_util.auto_function_command == 32
             ):
-                ros_util.publish_actions(uf.actions)
-                ros_util.rate.sleep()
+                self.ros_util.publish_actions(uf.actions)
+                self.ros_util.rate.sleep()
 
-            ros_util.control_pub.publish(True)
+            temp = Bool()
+            temp.data = True
+            self.ros_util.control_pub.publish(temp)
 
-            if ros_util.auto_function_command == 1:
-                af.auto_drive_location(world_state, ros_util)
-            elif ros_util.auto_function_command == 2:
-                af.auto_dig(world_state, ros_util, 10)
-            elif ros_util.auto_function_command == 4:
-                af.auto_dump(world_state, ros_util, 4)
-            elif ros_util.auto_function_command == 8:
-                af.auto_dock(world_state, ros_util)
-            elif ros_util.auto_function_command == 16:
-                self.full_autonomy(world_state, ros_util)
+            if self.ros_util.auto_function_command == 1:
+                af.auto_drive_location(self.world_state, self.ros_util)
+            elif self.ros_util.auto_function_command == 2:
+                af.auto_dig(self.world_state, self.ros_util, 10)
+            elif self.ros_util.auto_function_command == 4:
+                af.auto_dump(self.world_state, self.ros_util, 4)
+            elif self.ros_util.auto_function_command == 8:
+                af.auto_dock(self.world_state, self.ros_util)
+            elif self.ros_util.auto_function_command == 16:
+                self.full_autonomy(self.world_state, self.ros_util)
             else:
-                world_state.logger.info(
-                    'Invalid auto-function request: {}'.format(ros_util.auto_function_command)
+                self.world_state.logger.info(
+                    'Invalid auto-function request: {}'.format(self.ros_util.auto_function_command)
                 )
         
-            ros_util.auto_function_command = 0
-            ros_util.publish_actions(uf.actions)
-            ros_util.control_pub.publish(False)
+            self.ros_util.auto_function_command = 0
+            self.ros_util.publish_actions(uf.actions)
+            temp.data = False
+            self.ros_util.control_pub.publish(temp)
      
 
 
 def main(args=None):
-    rclpy.init(args=args)
-    standard_controller_args = sys.argv[1:10]
-    controller = StandardRoverController(topics=topics, args=standard_controller_args)
+    try:
+        rclpy.init(args=args)
+        standard_controller_args = sys.argv[1:10]
+        controller = StandardRoverController(topics=topics, args=standard_controller_args)
 
-    if not sys.argv[8]:
-        controller.autonomous_control_loop(
-            controller.world_state, controller.ros_util
-        )
+        rclpy.spin(controller)
+
+    except KeyboardInterrupt:
+        pass
+
+if __name__ == "__main__":
+    main()
     

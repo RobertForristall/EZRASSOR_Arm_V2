@@ -1,9 +1,8 @@
-import queue
-from turtle import right
+from ezrassor_arm_v2.arms_driver import QUEUE_SIZE
 import rclpy
 from sensor_msgs.msg import LaserScan
 import numpy as np
-from pointclud_processor import PointCloudProcessor
+from ezrassor_arm_v2.pointcloud_processor import PointCloudProcessor
 import sys
 
 class ObstacleDetector(PointCloudProcessor):
@@ -29,15 +28,15 @@ class ObstacleDetector(PointCloudProcessor):
         self.topic_prefix = 'obstacle_detection/'
 
         self.hike_pub = self.create_publisher(
-            LaserScan, self.topic_prefix + 'hike', queue_size=10
+            LaserScan, self.topic_prefix + 'hike', QUEUE_SIZE
         )
 
         self.slope_pub = self.create_publisher(
-            LaserScan, self.topic_prefix + 'slope', queue_size=10
+            LaserScan, self.topic_prefix + 'slope', QUEUE_SIZE
         )
 
         self.combined_pub = self.create_publisher(
-            LaserScan, self.topic_prefix + 'combined', queue_size=10
+            LaserScan, self.topic_prefix + 'combined', QUEUE_SIZE
         )
 
         self.get_logger().info(
@@ -149,26 +148,29 @@ class ObstacleDetector(PointCloudProcessor):
 
 
 def main(args=None):
+    try:
+        rclpy.init(args=args)
+        
+        max_angle = float(sys.argv[1])
+        max_obstacle_dist = float(sys.argv[2])
+        min_hole_diameter = float(sys.argv[3])
+        scan_time = 1.0 / 30,
+        range_min=0.105,
+        range_max=10.0,
 
-    rclpy.init(args=args)
-    
-    max_angle = sys.argv[1]
-    max_obstacle_dist = sys.argv[2]
-    min_hole_diameter = sys.argv[3]
-    scan_time = 1.0 / 30,
-    range_min=0.105,
-    range_max=10.0,
+        detector = ObstacleDetector(
+            max_angle,
+            max_obstacle_dist,
+            min_hole_diameter,
+            scan_time,
+            range_min,
+            range_max
+        )
 
-    detector = ObstacleDetector(
-        max_angle,
-        max_obstacle_dist,
-        min_hole_diameter,
-        scan_time,
-        range_min,
-        range_max
-    )
-
-    rclpy.spin(detector)
+        rclpy.spin(detector)
+        
+    except KeyboardInterrupt:
+        pass
 
 if __name__ == '__main__':
     main()

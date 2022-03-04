@@ -1,5 +1,5 @@
 import math
-from tf import transformations
+from transforms3d.euler import quat2euler
 
 def euclidean_distance(x1, x2, y1, y2):
     return math.sqrt((x2-x1)**2 + (y2-y1)**2)
@@ -31,7 +31,7 @@ def quaternion_to_yaw(pose):
         pose.orientation.z,
         pose.orientation.w
     }
-    euler = transformations.euler_from_quaternion(quat)
+    euler = quat2euler(quat)
     return euler[2]
 
 def angle_is_safe(angle, dist, buffer, scan, threshold):

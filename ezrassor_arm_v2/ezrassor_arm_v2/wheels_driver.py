@@ -14,7 +14,7 @@ import rclpy
 from rclpy.node import Node
 
 WHEELS_EXTERNAL_TOPIC = "wheel_instructions"
-WHEELS_INTERNAL_TOPIC = "diff_drive_controller/cmd_vel_unstamped"
+WHEELS_INTERNAL_TOPIC = "ezrassor/diff_drive_controller/cmd_vel_unstamped"
 MAX_VELOCITY = 5
 QUEUE_SIZE = 10
 

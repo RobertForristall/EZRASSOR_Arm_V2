@@ -1,8 +1,11 @@
 from email.mime import image
-import rclpy
+from ezrassor_arm_v2.arms_driver import QUEUE_SIZE
+from rclpy.node import Node
 from sensor_msgs.msg import (PointCloud2, CameraInfo)
 import numpy as np
 import image_geometry
+
+base_namespace = 'ezrassor/front_camera/'
 
 class PointCloudProcessor(Node):
 
@@ -17,16 +20,16 @@ class PointCloudProcessor(Node):
 
         self.cam_info_sub = self.create_subscription (
             CameraInfo,
-            'depth/camera_info',
+            base_namespace + 'depth/camera_info',
             self.init_pc_info,
-            10
+            QUEUE_SIZE
         )
 
         self.pc_sub = self.create_subscription(
             PointCloud2,
-            'depth/points',
+            base_namespace + 'depth/points',
             self.on_pc_update,
-            10
+            QUEUE_SIZE
         )
 
     def on_pc_update(self, data):

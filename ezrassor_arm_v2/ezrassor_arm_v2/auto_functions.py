@@ -1,6 +1,6 @@
 import rclpy
-import utility_functions as uf
-import nav_functions as nf
+import ezrassor_arm_v2.utility_functions as uf
+import ezrassor_arm_v2.nav_functions as nf
 
 from time import sleep
 
@@ -36,11 +36,19 @@ def auto_drive_location(world_state, ros_util, waypoint_server=None):
     preempted = False
     #feedback = uf.send_feedback(world_state, waypoint_server)
 
+    world_state.logger.info(
+        'Raising drums before driving...'
+    )
+
     if ros_util.rover_model == 'arm':
         uf.set_back_arm_angle(world_state, ros_util, 0.5)
     else:
         uf.set_front_arm_angle(world_state, ros_util, 1.3)
         uf.set_back_arm_angle(world_state, ros_util, 1.3)
+
+    world_state.logger.info(
+        'Drums raised, performing self check...'
+    )
 
     if uf.self_check(world_state, ros_util) != 1:
         preempted = True
@@ -55,6 +63,10 @@ def auto_drive_location(world_state, ros_util, waypoint_server=None):
         #return feedback, preempted
         return preempted
     
+    world_state.logger.info(
+        'Self check complete, getting new heading...'
+    )
+    
     new_heading_deg = nf.calculate_heading(world_state)
     angle2goal_rad = nf.adjust_angle(
         world_state.heading, new_heading_deg
@@ -65,6 +77,10 @@ def auto_drive_location(world_state, ros_util, waypoint_server=None):
     else:
         direction = 'left'
     
+    world_state.logger.info(
+        'New heading obtained, turning to face target...'
+    )
+
     uf.turn(
         new_heading_deg, 
         direction, 
@@ -73,6 +89,10 @@ def auto_drive_location(world_state, ros_util, waypoint_server=None):
     )
 
     ros_util.publish_actions(uf.actions)
+
+    world_state.logger.info(
+        'Turn complete, begining movement loop...'
+    )
 
     while not at_target(
         world_state.position['x'],
