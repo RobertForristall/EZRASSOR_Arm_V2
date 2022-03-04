@@ -5,7 +5,7 @@ import math
 from geometry_msgs.msg import (Twist, Pose, Point)
 import nav_functions as nf
 from random import uniform
-from std_msgs.msg import (Float32, Bool)
+from std_msgs.msg import (Float32, Bool, Float64MultiArray)
 from ezrassor_arm_interfaces.msg import ArmCommand
 
 scan = None
