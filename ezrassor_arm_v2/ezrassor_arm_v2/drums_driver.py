@@ -44,7 +44,7 @@ class DrumsSubscriber(Node):
             )
 
             self.back_drums_publisher = self.create_publisher(
-                std_msgs.msg.Float64, BACK_DRUMS_INTERNAL_TOPIC, QUEUE_SIZE
+                std_msgs.msg.Float64MultiArray, BACK_DRUMS_INTERNAL_TOPIC, QUEUE_SIZE
             )
             
         else:
@@ -64,11 +64,11 @@ class DrumsSubscriber(Node):
             )
 
             self.front_drums_publisher = self.create_publisher(
-                std_msgs.msg.Float64, FRONT_DRUMS_INTERNAL_TOPIC, QUEUE_SIZE
+                std_msgs.msg.Float64MultiArray, FRONT_DRUMS_INTERNAL_TOPIC, QUEUE_SIZE
             )
 
             self.back_drums_publisher = self.create_publisher(
-                std_msgs.msg.Float64, BACK_DRUMS_INTERNAL_TOPIC, QUEUE_SIZE
+                std_msgs.msg.Float64MultiArray, BACK_DRUMS_INTERNAL_TOPIC, QUEUE_SIZE
             )
 
         self.get_logger().info("drums_driver node created successfully")
@@ -77,16 +77,16 @@ class DrumsSubscriber(Node):
         """Move the front drum of the robot per
         the commands encoded in the instruction
         """
-        msg = std_msgs.msg.Float64()
-        msg.data = (data.data * MAX_DRUM_SPEED)
+        msg = std_msgs.msg.Float64MultiArray()
+        msg.data = [(data.data * MAX_DRUM_SPEED)]
         self.front_drums_publisher.publish(msg)
 
     def handle_back_drum_movements(self, data: std_msgs.msg.Float64):
         """Move the back drum of the robot per
         the commands encoded in the instruction
         """
-        msg = std_msgs.msg.Float64()
-        msg.data = (data.data * MAX_DRUM_SPEED)
+        msg = std_msgs.msg.Float64MultiArray()
+        msg.data = [(data.data * MAX_DRUM_SPEED)]
         self.back_drums_publisher.publish(msg)
 
 

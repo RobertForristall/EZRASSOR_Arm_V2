@@ -10,6 +10,7 @@ The abstraction done by this node is necessary to be able to switch
 between hardware and software; a similarly written hardware node could
 listen to the same istructions topic and command actuators, instead of the sim.
 """
+from threading import Thread
 import std_msgs.msg
 import rclpy
 import sys
@@ -31,9 +32,8 @@ def handle_front_arm_movements(data):
     """Move the front arm of the robot per
     the commands encoded in the instruction.
     """
-    msg = std_msgs.msg.Float64()
-    msg.data = (data.data * MAX_ARM_SPEED)
-    print(msg)
+    msg = std_msgs.msg.Float64MultiArray()
+    msg.data = [(data.data * MAX_ARM_SPEED)]
     publishers[FRONT_ARMS_INTERNAL_TOPIC].publish(msg)
 
 
@@ -41,8 +41,8 @@ def handle_back_arm_movements(data):
     """Move the front arm of the robot per
     the commands encoded in the instruction.
     """
-    msg = std_msgs.msg.Float64()
-    msg.data = (data.data * MAX_ARM_SPEED)
+    msg = std_msgs.msg.Float64MultiArray()
+    msg.data = [(data.data * MAX_ARM_SPEED)]
     publishers[BACK_ARMS_INTERNAL_TOPIC].publish(msg)
 
 
@@ -55,7 +55,7 @@ def main(passed_args=None):
 
         if (model == 'arm'):
             publishers[BACK_ARMS_INTERNAL_TOPIC] = node.create_publisher(
-                std_msgs.msg.Float64, BACK_ARMS_INTERNAL_TOPIC, QUEUE_SIZE
+                std_msgs.msg.Float64MultiArray, BACK_ARMS_INTERNAL_TOPIC, QUEUE_SIZE
             )
 
             node.create_subscription(
@@ -68,10 +68,10 @@ def main(passed_args=None):
 
             # Create publishers to Gazebo velocity managers.
             publishers[FRONT_ARMS_INTERNAL_TOPIC] = node.create_publisher(
-                std_msgs.msg.Float64, FRONT_ARMS_INTERNAL_TOPIC, QUEUE_SIZE
+                std_msgs.msg.Float64MultiArray, FRONT_ARMS_INTERNAL_TOPIC, QUEUE_SIZE
             )
             publishers[BACK_ARMS_INTERNAL_TOPIC] = node.create_publisher(
-                std_msgs.msg.Float64, BACK_ARMS_INTERNAL_TOPIC, QUEUE_SIZE
+                std_msgs.msg.Float64MultiArray, BACK_ARMS_INTERNAL_TOPIC, QUEUE_SIZE
             )
 
             # Create subscriptions to listen for specific robot actions from users.
