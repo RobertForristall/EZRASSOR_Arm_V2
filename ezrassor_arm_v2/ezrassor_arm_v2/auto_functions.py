@@ -41,10 +41,10 @@ def auto_drive_location(world_state, ros_util, waypoint_server=None):
     )
 
     if ros_util.rover_model == 'arm':
-        uf.set_back_arm_angle(world_state, ros_util, 0.5)
+        uf.set_back_arm_angle_temp(world_state, ros_util, 0.5)
     else:
-        uf.set_front_arm_angle(world_state, ros_util, 1.3)
-        uf.set_back_arm_angle(world_state, ros_util, 1.3)
+        uf.set_front_arm_angle_temp(world_state, ros_util, 1.3)
+        uf.set_back_arm_angle_temp(world_state, ros_util, 1.3)
 
     world_state.logger.info(
         'Drums raised, performing self check...'
@@ -108,11 +108,11 @@ def auto_drive_location(world_state, ros_util, waypoint_server=None):
             preempted = True
             break
         
-        if ros_util.rover_model == 'arm':
-            uf.set_back_arm_angle(world_state, ros_util, 0.5)
-        else:
-            uf.set_front_arm_angle(world_state, ros_util, 1.3)
-            uf.set_back_arm_angle(world_state, ros_util, 1.3)
+        #if ros_util.rover_model == 'arm':
+        #    uf.set_back_arm_angle(world_state, ros_util, 0.5)
+        #else:
+        #    uf.set_front_arm_angle(world_state, ros_util, 1.3)
+        #    uf.set_back_arm_angle(world_state, ros_util, 1.3)
 
         if uf.self_check(world_state, ros_util) != 1:
             preempted = True

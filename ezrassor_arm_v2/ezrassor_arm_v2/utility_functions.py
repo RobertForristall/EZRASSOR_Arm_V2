@@ -1,5 +1,6 @@
 from glob import glob
 from operator import truediv
+from time import sleep
 import rclpy
 import math
 from geometry_msgs.msg import (Twist, Pose, Point)
@@ -7,6 +8,7 @@ import ezrassor_arm_v2.nav_functions as nf
 from random import uniform
 from std_msgs.msg import (Float32, Bool, Float64MultiArray, Float64)
 from ezrassor_arm_interfaces.msg import ArmCommand
+from sensor_msgs.msg import JointState
 
 scan = None
 
@@ -40,6 +42,7 @@ class WorldState:
         self.heading = 0
         self.warning_flag = 0
         self.target_location = Point()
+        self.dig_site = Point()
         self.flags = {
             'on_side': False,
             'on_back': False,
@@ -52,8 +55,16 @@ class WorldState:
         self.logger = node.get_logger()
     
     def jointCallBack(self, data):
-        self.arm_angles['front'] = data.position[1]
-        self.arm_angles['back'] = data.position[5]
+
+        front_index = data.name.index('arm_front_joint')
+        back_index = data.name.index('arm_back_joint')
+
+        self.arm_angles['front'] = data.position[front_index]
+        self.arm_angles['back'] = data.position[back_index]
+
+        #print('Msg Angle: {}'.format(data.position[front_index]))
+        #print('Svaed Angle: {}'.format(self.arm_angles['front']))
+
 
     def odometryCallBack(self, data):
         self.position['x'] = data.pose.pose.position.x + self.start_position['x']
@@ -223,6 +234,8 @@ def set_front_arm_angle(world_state, ros_util, target_angle):
 
     if target_angle > world_state.arm_angles['front']:
         while target_angle > world_state.arm_angles['front']:
+            print('Target: {}'.format(target_angle))
+            print('Current: {}'.format(world_state.arm_angles['front']))
             actions.update({'front_arm': 1.0})
             ros_util.publish_actions(actions)
         msg.data = True
@@ -257,6 +270,47 @@ def set_back_arm_angle(world_state, ros_util, target_angle):
     actions.update({'back_arm': 0.0})
     ros_util.publish_actions(actions)
 
+def set_front_arm_angle_temp(world_state, ros_util, target_angle):
+    arm_up_msg = Bool()
+    front_arm_msg = Float64()
+
+    if target_angle > world_state.arm_angles['front']:
+        front_arm_msg.data = 1.0
+        for i in range(5000):
+            ros_util.front_arm_pub.publish(front_arm_msg)
+        arm_up_msg.data = True
+        ros_util.arms_up_pub.publish(arm_up_msg)
+    else:
+        front_arm_msg.data = -1.0
+        for i in range(5000):
+            ros_util.front_arm_pub.publish(front_arm_msg)
+        arm_up_msg.data = False
+        ros_util.arms_up_pub.publish(arm_up_msg)
+    
+    front_arm_msg.data = 0.0
+    ros_util.front_arm_pub.publish(front_arm_msg)
+
+def set_back_arm_angle_temp(world_state, ros_util, target_angle):
+    arm_up_msg = Bool()
+    back_arm_msg = Float64()
+
+    if target_angle > world_state.arm_angles['back']:
+        back_arm_msg.data = 1.0
+        for i in range(5000):
+            ros_util.back_arm_pub.publish(back_arm_msg)
+        arm_up_msg.data = True
+        ros_util.arms_up_pub.publish(arm_up_msg)
+    else:
+        back_arm_msg.data = -1.0
+        for i in range(5000):
+            ros_util.back_arm_pub.publish(back_arm_msg)
+        arm_up_msg.data = False
+        ros_util.arms_up_pub.publish(arm_up_msg)
+    
+    back_arm_msg.data = 0.0
+    ros_util.back_arm_pub.publish(back_arm_msg)
+
+
 def self_check(world_state, ros_util):
 
     if (
@@ -284,10 +338,17 @@ def self_check(world_state, ros_util):
 
 def turn(new_heading, direction, world_state, ros_util):
 
+    twist_msg = Twist()
+
     angle_dist = abs((new_heading - world_state.heading + 180) % 360 - 180)
     angle_traveled = 0
 
+    world_state.logger.info(
+        'Starting turn loop...'
+    )
+
     while angle_traveled < angle_dist - 2:
+
         if self_check(world_state, ros_util) != 1:
             world_state.logger.info(
                 'Status check failed.'
@@ -305,17 +366,16 @@ def turn(new_heading, direction, world_state, ros_util):
         if direction == 'right':
             turn_velocity *= -1
         
-        twist_msg = Twist()
-        twist_msg.angular.z = turn_velocity
+        twist_msg.angular.z = float(turn_velocity)
         ros_util.movement_pub.publish(twist_msg)
 
-        ros_util.rate.sleep()
+        #ros_util.rate.sleep()
 
         angle_traveled += abs(
             (world_state.heading - old_heading + 180) % 360 - 180
         )
     
-    twist_msg.angular.z = 0
+    twist_msg.angular.z = 0.0
     ros_util.movement_pub.publish(twist_msg)
 
 def move(dist, world_state, ros_util, direction="forward"):
