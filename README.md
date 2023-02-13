@@ -1,1 +1,3 @@
 # EZRASSOR_Arm_V2
+
+This is a personal project written by Robert Forristall to expand my understanding of ROS and Robotics by implementing my own solution to the original ROS1 solution created by FSI. After working personally on the original ROS1 version as the project manager for the robotic arm attachment solution team, I wished to continue my studies into robotics software in a simulated solution. This repository currently contains the main code for the simulated Gazebo solution of the EZ-RASSOR robot in ROS2 along with a message interface package for arm commands and a moveit package that maintains control of the robotic arm.
